@@ -15,25 +15,25 @@ Now it's time to install and start using the default charts specifications provi
 
 ## Installation    ????
 
-The stripcharts package comes with all required dependencies (including c3 charting library and d3 visualization library).
+signalk-stripcharts comes with all required dependencies (including c3 charting library and d3 visualization library).
 
-Installation on a client only device:
+### Installation on a client-only device:
 - create a local folder
 - download from   (github)
 
-Installation on a node server (usually the boat Signal K server):
-Use npm: [sudo] install stripcharts from
+### Installation on a node server (typically the boat Signal K server):
+Use npm: [sudo] install signalk-stripcharts from
 
-This will install stripcharts and its dependencies c3 and d3 under ./node_modules.  
-(stripcharts, c3 and d3 must be under the same node_modules folder; any other configuration requires script elements in stripcharts.html to be edited in order to correctly point to the c3 and d3 assets).
+This will install signalk-stripcharts and its dependencies c3 and d3 under ./node_modules.  
+(signalk-stripcharts , c3 and d3 must be under the same node_modules folder; any other configuration requires script elements in stripcharts.html to be edited in order to correctly point to the c3 and d3 assets).
 
-Stripcharts could be set as a Signal K Webbapp and started from the Signal K user interface.
+signalk-stripcharts could be set as a Signal K Webbapp and started from the Signal K user interface.
 
 ## Basic usage
 
 Go to the installed folder.   ???
 Use ./index.html as a launch menu.
-Here you can choose the Signal K server and choose a set of charts, then push the "Launch StripCharts" button.
+Here you can choose the Signal K server and choose a set of charts, then push the "Launch signalk-stripcharts " button.
 
 When the charts are displayed:
 - hover on a legend: the corresponding plot is highlighted, the others dimmed; the corresponding Signal K path is displayed above the legend
@@ -134,7 +134,7 @@ In a specification file, a chart can be derived from another and only the proper
 Ample comments are provided in the installed specifications files for those features that were not explained above.
 Additional documentation may be provided later as needed.
 
-Stripcharts buffers having no persistency, they cannot be used to store the history.
+signalk-stripcharts buffers having no persistency, they cannot be used to store the history.
 Persistency and more powerful charting capabilities can be provided with InfluxDB and Grafana as explained here (https://github.com/tkurki/signalk-to-influxdb/blob/master/README.md) or could be provided with the help of the history capability of Signal K if available.
 
 ## Customization
@@ -178,7 +178,7 @@ Some tracing options are provided in ./js/stripcharts_options.js. Tracing occurs
 - [ ] Filter out from the specs the path/sources which are never provided by the signalk server and/or derive missing path values from other paths when possible
 
 ## Technical improvements
-Stripcharts is essentially a html/javascript front-end application.
+signalk-stripcharts is essentially a html/javascript front-end application.
 It was developed with no or very limited prior knowledge of Linux, Javascript, HTML, CSS, Signal K, Node.js and other js-related tools.
 Therefore much technical improvement is of course possible.
 In particular the following improvements could be considered without structural changes:
