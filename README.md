@@ -9,7 +9,7 @@ The above chart has a y-axis on the left hand side. Optionally, as shown on the 
 
 ![simple chart + y2](readme2.PNG)
 
-The browser window can display two such charts on top of each other. For instance you may have wind speeds on the top chart and boat speeds on the bottom chart. Those two charts can be selected with a dropdown list from a set of active charts.
+The browser window can display two such charts on top of each other. For instance you may have wind speeds on the top chart and boat speeds on the bottom chart, or wind speeds with two different time windows, say 10 minutes and 24 hours. Those two charts can be selected with a dropdown list from a set of active charts.
 
 Now it's time to install and start using the default charts specifications provided.
 
@@ -37,11 +37,10 @@ Here you can choose the Signal K server and choose a set of charts, then push th
 
 When the charts are displayed:
 - hover on a legend: the corresponding plot is highlighted, the others dimmed; the corresponding Signal K path is displayed above the legend
-- hover on a plot line, tooltips are diplayed
-- by clicking on a legend you can toggle the dim status of the legend and the corresponding plot
+- hover on a plot line, a tooltip is diplayed with the values corresponding to the legends
+- by clicking on a legend you can toggle the dim status of the legend and of the corresponding plot
 
-You may wish to bookmark the launched page(s) for easier later launching.
-Modify the query parameters (server & specs) as needed, e.g. if you have defined your own charts psecifications (see later section "How it works").
+You may wish to bookmark the launched page(s) for easier later launching. Modify the query parameters (server & specs) as needed, e.g. if you have defined your own charts psecifications (see later section "How it works").
 
 ### y- and y2-axis buttons
 
@@ -92,8 +91,8 @@ Here is the specification for the chart shown at the top of this section:
 
 ```javascript
 const Wind_speeds_10min = 
-    { stripChartName: "Wind_speeds_10min",   // stripChartName MUST be same as the containing object name
-    // and hence follow javascript variables naming rules (see https://javascript.info/variables#variable-naming)
+    { stripChartName: "Wind_speeds_10min",   // stripChartName MUST BE THE SAME as the containing object name
+    // and hence follows javascript variables naming rules (see https://javascript.info/variables#variable-naming)
         timeWindow: 600,            // 10min
         avgInterval: 2,             // 2 sec
         intervalsPerRefresh: 2,     // default 1
@@ -174,7 +173,7 @@ Recent non-ESR versions of Firefox seems to show some svg rendition problems.
 
 ## CPU requirements
 
-On a Raspberry Pi 3B+ with Chromium: a burst of approximately 20% cpu consumption is observed when the charts are refreshed (typically every 4 seconds for a 10 minute timeWindow chart). This is only when the window tab is visible.
+On a Raspberry Pi 3B+ with Chromium: a burst of approximately 20% cpu consumption is observed when the charts are refreshed (typically every 4 seconds for a 10 minute timeWindow, or every 10 seconds for a 2 hour timeWindow). This is only when the window tab is visible and "playing".
 
 ## Troubleshooting
 
