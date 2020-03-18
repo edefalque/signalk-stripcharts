@@ -13,26 +13,24 @@ The browser window can display two such charts on top of each other. For instanc
 
 Now it's time to install and start using the default charts specifications provided.
 
-## Installation    ????
+## Installation
 
 signalk-stripcharts comes with all required dependencies (including c3 charting library and d3 visualization library).
 
 ### Installation on a client-only device:
-- create a local folder
-- download from   (github)
+- Download the ZIP file from https://github.com/edefalque/signalk-stripcharts and unzip in a folder
 
 ### Installation on a node server (typically the boat Signal K server):
-Use npm: [sudo] install signalk-stripcharts from
+- Use npm: [sudo] npm install signalk-stripcharts
 
-This will install signalk-stripcharts and its dependencies c3 and d3 under ./node_modules.  
-(signalk-stripcharts , c3 and d3 must be under the same node_modules folder; any other configuration requires script elements in stripcharts.html to be edited in order to correctly point to the c3 and d3 assets).
+This will install signalk-stripcharts and its dependencies c3 and d3 under ./node_modules.
 
 signalk-stripcharts could be set as a Signal K Webbapp and started from the Signal K user interface.
 
 ## Basic usage
 
-Go to the installed folder.   ???
-Use ./index.html as a launch menu.
+Use index.html as a launch menu.
+
 Here you can choose the Signal K server and choose a set of charts, then push the "Launch signalk-stripcharts " button.
 
 When the charts are displayed:
@@ -125,7 +123,7 @@ The charts specifications sets are each stored in a .js file in the ./specs fold
 The following specifications files are provided at installation:
 - sail.js
 - environment.js
-- engines.js  (provided as an untested example ???)
+- engines.js  (provided as a partially tested example)
 Each of them can be started in its own browser tab and run concurrently.
 
 New specifications files can be easily derived from those. Copy them and edit them with a text editor, or better with a code editor such as Geany or Visual Studio Code.

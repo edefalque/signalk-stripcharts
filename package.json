@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Generate strip charts from Signal K live boat data",
   "main": "stripcharts.js", 
-  "repository": "https://github.com/edefalque/stripcharts",
+  "repository": "https://github.com/edefalque/signalk-stripcharts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,6 +16,5 @@
   "author": "Etienne Defalque <etienne@defalque.net>",
   "license": "MIT",
   "dependencies": {
-      "c3": [ "^0.7.14", "c3 included in package as ./c3" ],     
   }
 }
