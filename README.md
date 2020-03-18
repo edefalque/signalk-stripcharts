@@ -5,11 +5,11 @@ Legends identify by abbreviations what paths are charted. Here is a chart with a
 
 ![simple chart](readme1.PNG)
 
-The above chart has a y-axis on the left hand side. Optionally, as shown on the chart below (right hand side), a y2-axis may also be defined with distinct units. The dotted line corresponds to the plot according to the y2 axis, here the apparent wind angle (AWA).
+The above chart has a y-axis on the left hand side. Optionally, as shown on the chart below (right hand side), a y2-axis may also be defined with its own unit. The dotted line corresponds to the plot according to the y2 axis, here the apparent wind angle (AWA).
 
 ![simple chart + y2](readme2.PNG)
 
-The browser window can display two such charts on top of each other.
+The browser window can display two such charts on top of each other. For instance you may have wind speeds on the top chart and boat speeds on the bottom chart. Those two charts can be selected wiht a dropdown list from a set of active charts.
 
 Now it's time to install and start using the default charts specifications provided.
 
