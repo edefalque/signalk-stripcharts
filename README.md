@@ -130,10 +130,9 @@ The following specifications files are provided at installation:
 Each of them can be started in its own browser tab and run concurrently.
 
 New specifications files can be easily derived from those. Copy them and edit them with a text editor, or better with a code editor such as Geany or Visual Studio Code.
-In a specification file, a chart can be derived from another and only the properties that differ need to be specified (e.g. a two-hours chart can be derived from a ten-minutes chart, with most of the properties inherited). Inheritance is provided at the first level of properties only.
+In a specification file, a chart specification can be derived from another chart and only the properties that differ need to be specified (e.g. a two-hours chart can be derived from a ten-minutes chart, with most of the properties inherited). Inheritance is provided at the first level of properties only.
 
 Ample comments are provided in the installed specifications files for those features that were not explained above.
-Additional documentation may be provided later as needed.
 
 signalk-stripcharts buffers having no persistency, they cannot be used to store the history.
 Persistency and more powerful charting capabilities can be provided with InfluxDB and Grafana as explained here (https://github.com/tkurki/signalk-to-influxdb/blob/master/README.md) or could be provided with the help of the history capability of Signal K if available.
