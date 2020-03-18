@@ -161,15 +161,25 @@ Those can be overidden in the chart specs.
 
 A special unit "Percent" is provided. It allows to plot values of different units on a same "Percent" y or y2 axis by providing reference values in the Signal K unit for 0% and for 100%. See engines.js for an example with comments.
 
-## Browser compatibility  ???
+## Browser compatibility
 
-## CPU requirements   ???
+signalk-stripcharts uses ECMASript 2015 (ES6).
+It was mostly developed on Raspbian Chromium 72.0.3626.121 and Windows 10 Chrome 80.0.3987.132.
+
+It seems to also work fine on:
+- Windows 10 with Edge 18362 and with Firefox-ESR 68.6.0esr
+- Raspbian with Firefox-ESR 52.9.0
+
+Recent non-ESR versions of Firefox seems to show some svg rendition problems.
+
+## CPU requirements
+
+On a Raspberry Pi 3B+ with Chromium: a burst of approximately 20% cpu consumption is observed when the charts are refreshed (typically every 4 seconds for a 10 minute timeWindow chart). This is only when the window tab is visible.
 
 ## Troubleshooting
 
 Syntax errors in the charts specifications files will be caught by javascript.
-Logical errors in the specs and errors in the data returned by Signal K may also be reported.
-Inspect the console as needed.
+Logical errors in the specs and errors in the data returned by Signal K may also be reported. Inspect the console as needed.
 
 Some tracing options are provided in ./js/stripcharts_options.js. Tracing occurs below the displayed charts.
 
