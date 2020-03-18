@@ -45,7 +45,7 @@ Modify the query parameters (server & specs) as needed, e.g. if you have defined
 
 ### y- and y2-axis buttons
 
-These buttons affect the size and position of the plotting lines corresponding to the axis :
+These buttons affect the size and position of the plotted lines corresponding to the axis :
 
 ![simple chart + y2](https://github.com/edefalque/signalk-stripcharts/blob/master/pics/buttons-axis.PNG)
 
