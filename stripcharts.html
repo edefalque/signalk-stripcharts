@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stripCharts</title>
+    <meta charset="utf-8">
+</head>
+<body class="night" onresize="resizeWin()"  style="font-size:24px;">
+    <script>
+    /* For reuse, some svg icons are provided as templates;
+    *  icon templates are inserted by calling insertIcon function;
+    *  each insertIcon invocation is inserted as a script within a button element 
+    */
+        function insertIcon(templateId) {
+            let templ = document.getElementById(templateId);
+            let clon = templ.content.cloneNode(true);
+            document.currentScript.parentElement.appendChild(clon);
+        }
+    </script>
+    <!--
+        Icons
+        =====
+        All svg elements herein are from https://feathericons.com/
+        Copyright (c) 2013-2017 Cole Bemis
+        MIT license: https://github.com/feathericons/feather/blob/master/LICENSE
+    -->
+    <template id="zoomInIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-zoom-in">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <line x1="11" y1="8" x2="11" y2="14"></line>
+        <line x1="8" y1="11" x2="14" y2="11"></line>
+        </svg>
+    </template>
+    <template id="zoomOutIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-zoom-out">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <line x1="8" y1="11" x2="14" y2="11"></line>
+        </svg>
+    </template>
+    <template id="upIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+        </svg>
+    </template>
+    <template id="downIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-chevrons-down">
+        <polyline points="7 13 12 18 17 13"></polyline>
+        <polyline points="7 6 12 11 17 6"></polyline>
+        </svg>
+    </template>
+    <template id="centerIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-target">
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="6"></circle>
+        <circle cx="12" cy="12" r="2"></circle>
+        </svg>
+    </template>
+    <template id="resetIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-rotate-ccw">
+        <polyline points="1 4 1 10 7 10"></polyline>
+        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+        </svg>
+    </template>
+
+    <div id="main">
+    <div id="upperBar" class="bar">
+ 
+        <span id="yUpperCtl" class="yCtl">  
+            <button class="button unstyled" id="yZoomInU" onclick="zoomIn(upperChartObj, 'y')">
+                <script>insertIcon("zoomInIcon");</script></button>
+            <button class="button unstyled" id="yZoomOutU" onclick="zoomOut(upperChartObj, 'y')">
+                <script>insertIcon("zoomOutIcon");</script></button>
+            <button class="button unstyled" id="yUpU" onclick="up(upperChartObj, 'y')">
+                <script>insertIcon("upIcon");</script></button>
+            <button class="button unstyled" id="yDownU" onclick="down(upperChartObj, 'y')">
+                <script>insertIcon("downIcon");</script></button>
+            <button class="button unstyled" id="yCenterU" onclick="center(upperChartObj, 'y')">
+                <script>insertIcon("centerIcon");</script></button>
+            <button class="button unstyled" id="yResetU" onclick="reset(upperChartObj, 'y')">
+                <script>insertIcon("resetIcon");</script></button>          
+        </span>
+
+        <span id="upperSelector" class="selector">  
+            <select class="button" id="selectUpper" disabled onchange="genUpper(this.value)">
+                <!-- options loaded dynamically -->
+            </select>
+        </span>
+
+        <span id="windowCtl" class="wCtl">
+            <button class="button" id="nightDay" onclick="toggleNightDay()">
+                <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-sun">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-moon">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                 <script>
+                     document.getElementById("moon").style.display = "none";
+                     function toggleNightDay() {
+                        document.body.classList.toggle("night");
+                        if (document.body.classList.contains("night")) {        
+                            document.getElementById("moon").style.display = "none";
+                            document.getElementById("sun").style.display = "inline";              
+                        }
+                        else {
+                            document.getElementById("moon").style.display = "inline";
+                            document.getElementById("sun").style.display = "none";                
+                        }
+                     }   
+                 </script>
+             </button>
+             <button class="button" id="pausePlay" onclick="togglePausePlay(this)">
+                <svg id="pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -2 24 22"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-pause">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                <svg id="play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -2 24 22"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-play">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                  <script>
+                        document.getElementById("play").style.display = "none";
+                        var pausePlayButton = document.getElementById("pausePlay");                     
+                        var chartPaused = false;
+                        function togglePausePlay(x) {
+                            if (chartPaused == false) {  // was playing
+                                upperChartObj.setPauseLabel("Paused on");
+                                lowerChartObj.setPauseLabel("Paused on");
+                                document.getElementById("pause").style.display = "none";
+                                document.getElementById("play").style.display = "inline";
+                                chartPaused = true;
+                                // chart.zoom.enable(chartPaused); // enable chart zooming only when paused
+                            }
+                            else {
+                                upperChartObj.resetPauseLabel();
+                                lowerChartObj.resetPauseLabel();
+                                flushWaitingRows();  // just before ending pause
+                                document.getElementById("pause").style.display = "inline";
+                                document.getElementById("play").style.display = "none";
+                                chartPaused = false;
+                            }
+                      }	
+                  </script>
+            </button> 
+            <button class="button" id="hang-up" disabled onclick="if(disconnect()) {ws.close();}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-phone-off">
+                <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"></path>
+                <line x1="23" y1="1" x2="1" y2="23"></line></svg>
+                <script>
+                    function disconnect() {
+                      let r = confirm("Disconnect from Signalk?");
+                      if (r == false) { return false; }
+                      return true;                                           
+                    }
+                </script>
+            </button>
+        </span>
+        <span id="y2UpperCtl" class="yCtl">  
+            <button class="button unstyled" id="y2ZoomInU" onclick="zoomIn(upperChartObj, 'y2')">
+                <script>insertIcon("zoomInIcon");</script></button>
+            <button class="button unstyled" id="y2ZoomOutU" onclick="zoomOut(upperChartObj, 'y2')">
+                <script>insertIcon("zoomOutIcon");</script></button>
+            <button class="button unstyled" id="y2UpU" onclick="up(upperChartObj, 'y2')">
+                <script>insertIcon("upIcon");</script></button>
+            <button class="button unstyled" id="y2DownU" onclick="down(upperChartObj, 'y2')">
+                <script>insertIcon("downIcon");</script></button>
+            <button class="button unstyled" id="y2CenterU" onclick="center(upperChartObj, 'y2')">
+                <script>insertIcon("centerIcon");</script></button>
+            <button class="button unstyled" id="y2ResetU" onclick="reset(upperChartObj, 'y2')">
+                <script>insertIcon("resetIcon");</script></button>          
+        </span>
+
+    </div>
+
+    <div id="upperView" class="view"></div>
+
+    <div id="lowerBar" class="bar">
+
+        <span id="yLowerCtl" class="yCtl" >  
+            <button class="button unstyled" id="yZoomInL" onclick="zoomIn(lowerChartObj, 'y')">
+                <script>insertIcon("zoomInIcon");</script></button>
+            <button class="button unstyled" id="yZoomOutL" onclick="zoomOut(lowerChartObj, 'y')">
+                <script>insertIcon("zoomOutIcon");</script></button>
+            <button class="button unstyled" id="yUpL" onclick="up(lowerChartObj, 'y')">
+                <script>insertIcon("upIcon");</script></button>
+            <button class="button unstyled" id="yDownL" onclick="down(lowerChartObj, 'y')">
+                <script>insertIcon("downIcon");</script></button>
+            <button class="button unstyled" id="yCenterL" onclick="center(lowerChartObj, 'y')">
+                <script>insertIcon("centerIcon");</script></button>
+            <button class="button unstyled" id="yResetL" onclick="reset(lowerChartObj, 'y')">
+                <script>insertIcon("resetIcon");</script></button>          
+        </span>
+        
+        <span id="lowerSelector" class="selector">  
+            <select class="button" id="selectLower" disabled onchange="genLower(this.value)">
+                <!-- options loaded dynamically -->
+            </select>
+        </span>
+ 
+        <span id="y2LowerCtl" class="yCtl">  
+            <button class="button unstyled" id="y2ZoomInL" onclick="zoomIn(lowerChartObj, 'y2')">
+                <script>insertIcon("zoomInIcon");</script></button>
+            <button class="button unstyled" id="y2ZoomOutL" onclick="zoomOut(lowerChartObj, 'y2')">
+                <script>insertIcon("zoomOutIcon");</script></button>
+            <button class="button unstyled" id="y2UpL" onclick="up(lowerChartObj, 'y2')">
+                <script>insertIcon("upIcon");</script></button>
+            <button class="button unstyled" id="y2DownL" onclick="down(lowerChartObj, 'y2')">
+                <script>insertIcon("downIcon");</script></button>
+            <button class="button unstyled" id="y2CenterL" onclick="center(lowerChartObj, 'y2')">
+                <script>insertIcon("centerIcon");</script></button>
+            <button class="button unstyled" id="y2ResetL" onclick="reset(lowerChartObj, 'y2')">
+                <script>insertIcon("resetIcon");</script></button>          
+        </span>
+    </div>
+
+    <div id="lowerView" class="view"></div>
+</div>
+<!-- debug area -->
+<div id="logArea"></div>
+
+<!-- Dynamically load stripCharts specs file provided by the query string: see stripCharts.js -->
+<!-- instead of <script src="stripChartsSpecs-Sail.js")></script>    -->
+    
+</body>
+
+<!-- Load d3 and c3 -->
+<script src="./d3/d3.min.js" charset="utf-8"></script>
+<link href="./c3/c3.css" rel="stylesheet">
+<script src="./c3/c3.min.js"></script>
+
+<!-- Load stripChartsClass script -->
+<script src="./js/stripchart_class.js"></script>
+
+<!-- Load stripCharts run-options, units and colors -->
+<script src="./js/stripcharts_options.js"></script>
+<script src="./specs/units.js"></script>
+
+<!-- Load stripcharts css and main script -->
+<link href="stripcharts.css" rel="stylesheet">
+<script src="./js/stripcharts.js"></script>
+
+</html>

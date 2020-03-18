@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <p id="server"></p>
+        <title>Active paths</title>
+        <meta charset="utf-8">
+    </head>
+<body>
+
+<h3>Derived active paths with their "$source", and their sourceKeys if multiple "values"</h3>
+    <p id="result"></p>
+<h3>Above array is derived from following Signalk self content</h3>
+    <p id="self"></p>
+
+<script>
+// Display active paths an sources from signalk server
+// ****************************************************
+
+// get signalk server address from URL server parameter if any
+var server = "";
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+if (urlParams.has("server")) {
+    server = urlParams.get("server");
+}
+else {      
+    server = "localhost:3000";  // default server
+    alert("server param missing in URL, trying with " + server);
+}
+document.getElementById("server").innerHTML = "Failed to connect to server " + server + " (check console)";
+
+// Fetch self boat content from signalk server
+
+var url = "http://" + server + "/signalk/v1/api/vessels/self/";
+
+var signalkSelf = {};
+var fetchCompleted = false;
+if (url) {
+    (async () => {
+        let response = await fetch(url);
+        if (response.ok) { // if HTTP-status is 200-299
+            document.getElementById("server").innerHTML = "Connected to server " + server;
+            signalkSelf = await response.json(); // read response body and parse as JSON
+        } else {
+            document.getElementById("server").innerHTML = "Failed to connect to server " + server;
+            document.getElementById("server").innerHTML += "<br>" +"HTTP-Error: " + response.status;
+        }
+        fetchCompleted = true;
+    })();
+}
+
+// Find in content the active pathnames and related sources
+// (all sources if multiple values exist for same path);
+
+var activePaths = [];
+var path = "";
+function addPath(objName, obj, pth ) {   // recursive function
+    if (objName != "signalkSelf") { pth = pth + "." + objName; }
+    if ("value" in obj) {  // leaf key, pth is complete
+        pth = pth.slice(1, pth.length);  // remove leading "."
+        let pthObj = {};
+        pthObj.path = pth;
+        pthObj.$source = obj.$source;
+        if ("values" in obj) {
+            pthObj.sourceKeys = [];
+            for (const src in obj.values) {
+                // if (obj.values.hasOwnProperty(src)) {
+                    pthObj.sourceKeys.push(src);
+                //}
+            }
+        }
+        activePaths.push(pthObj);
+    } else {
+        keysArray = Object.keys(obj);
+        keysArray.forEach(key => {
+            if (typeof obj[key] === "object") {
+                addPath(key, obj[key], pth);
+            }
+        });
+    }
+}
+
+// When fetching signalk completed:
+// display server content;
+// display paths and sources as an array declaration.
+
+
+var myTimer = setInterval(function() {
+        if (fetchCompleted) {
+            addPath("signalkSelf", signalkSelf, path);   // <<<<<<<<<<<
+
+            document.getElementById("self").innerHTML = JSON.stringify(signalkSelf,null,3) ;
+            document.getElementById("result").innerHTML = "var activePaths = [";
+            activePaths.forEach(path => {
+                document.getElementById("result").innerHTML += "<br>" +  JSON.stringify(path,null,2) + ",";
+            });
+            document.getElementById("result").innerHTML += "<br>" + "];";
+            clearInterval(myTimer);
+        }
+}, 500);
+</script>
+</body>
+</html>

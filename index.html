@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!-- this form generates a url such as
+    "stripcharts.html?server=demo.signalk.org&specs=stripcharts_specs_sail.js"
+    and open a window with that url
+-->
+<html lang="en">
+<head>
+    <title>stripCharts Launch</title>
+    <meta charset="utf-8">
+</head>
+<style>
+body {background-color: black; color: White; font-size: 120%; margin-left: 200px;}
+input {height:14px; width:14px;}
+button {font-size: 90%;}
+</style>
+<body>
+    <div>
+        <br>
+        <p><b>Choose signalk server:</b></p>
+            <input type="radio" name="server" value="demo.signalk.org" checked> Signalk test site, demo.signalk.org (disconnected after a few minutes)<br>
+            <input type="radio" name="server" value="thisServer"> The server & port from which this page was loaded<br>
+            <input type="radio" name="server" value="localhost:3000"> Your local signalk server, localhost:3000 (if stripcharts installed on it)<br>
+            <br>
+        <p><b>Choose stripCharts specifications:</b></p>
+            <input type="radio" name="specs" value="sail" checked> Sail<br>
+            <input type="radio" name="specs" value="environment"> Environment<br>
+            <input type="radio" name="specs" value="engines"> Engines<br>
+            <!-- Add input elements here with your own specs file names (without .js extension);  
+                 your specs files must be in the specs folder;
+                 prefix them, eg with '_', in order to distinguish them from the provided ones -->  
+            <br>
+        <button onclick="launch()"><b>Launch StripCharts</b></button>
+        <span style="font-size: 70%; margin-left: 20px;">(after launching, you may find practical to bookmark the launched page)</span>
+        <br>
+        <br>
+        <p><b>Helper for specifications  -  Enumerate server active paths and their sources</b></p>
+        <button onclick="paths()"><b>Enumerate paths</b></button>
+    </div>
+<script>
+function launch() {
+    let url = "stripcharts.html?server=" + getChecked("server") + "&specs=" + getChecked("specs");
+    window.open(url);
+    // or location.replace(url);  
+}
+function paths() {
+    let url = "enumActivePaths.html?server=" + getChecked("server");
+    window.open(url);
+}
+function getChecked(radioName) {
+        let list = document.getElementsByName(radioName);
+        for(let i = 0; i < list.length; i++) {
+            if(list[i].checked) {
+                let val = list[i].value;
+                val = (radioName == "server" && val == "thisServer") ? window.location.host:val;
+                return val;
+            }
+        }
+    }
+
+</script>
+
+</body>
+</html>

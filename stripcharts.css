@@ -1,0 +1,190 @@
+body, div, span, select {
+  margin: 0;
+  padding: 0;
+  border-style: none;
+}
+
+.night #logArea {
+  color: silver;
+  font-size: medium;
+}
+
+#logArea {
+  font-size: large;
+} 
+
+.button {
+  margin-right: auto;
+  cursor: pointer;   /* not working for Edge ? */
+}
+
+.feather {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+}
+/*
+#windowCtl {
+  margin-left: 15%;
+}
+*/
+#y2UpperCtl, #y2LowerCtl {
+  float: right;
+}
+
+.selector .button {
+  height: 20px;
+  width: 150px;
+  background-color: Gainsboro ;
+}
+
+/* styles for additional grid lines as may be set in x/y.grid specs */
+.c3 .c3-ygrid-lines .redLine line { stroke: red; stroke-width: 0.5; }
+.c3 .c3-ygrid-lines .redLine text { fill: red; font-weight: lighter; }
+.c3 .c3-ygrid-lines .greenLine line { stroke: green; stroke-width: 0.5;}
+.c3 .c3-ygrid-lines .greenLine text { fill: green; font-weight: lighter;}
+.c3 .c3-ygrid-lines .blueLine line { stroke: blue; stroke-width: 0.5;}
+.c3 .c3-ygrid-lines .blueLine text { fill: blue; font-weight: lighter;}
+.c3 .c3-ygrid-lines .violetLine line { stroke: violet; stroke-width: 0.5;}
+.c3 .c3-ygrid-lines .violetLine text { fill: violet; font-weight: lighter;}
+.c3 .c3-ygrid-lines .orangeLine line { stroke: orange; stroke-width: 0.5;}
+.c3 .c3-ygrid-lines .orangeLine text { fill: orange; font-weight: lighter;}
+.c3 .c3-ygrid-lines .greyLine line { stroke: grey; stroke-width: 0.5;}
+.c3 .c3-ygrid-lines .greyLine text { fill: grey; font-weight: lighter;}
+
+/* y2-related lines received the additional "y2Plot" class  */
+.c3 .y2Plot path { stroke-width: 1px; stroke-dasharray: 3; }
+
+/* Legend element: increase font size on hover 
+.c3 .c3-legend-item:hover text {
+  font-size:15px;
+}
+*/
+
+/* pathTips */
+
+.pathTip {
+  visibility: hidden;
+  width: 100%;
+  height: 13px;
+  font-size: 12px;
+  color: grey;
+  text-align: center;
+  position: absolute;
+  bottom: 20px;
+  z-index: -10;
+}
+
+/* examples of line customization:
+.c3 .c3-line-TWD,
+.c3 .c3-line-TWDmax,
+.c3 .c3-line-TWDmin { stroke-width: 2px; stroke-dasharray: 5; }
+
+.c3 .c3-line-minDEPTH  {
+  stroke-width: 8px;
+  stroke-dasharray: 10;
+}
+*/
+/* day vision */
+/* ********** */
+body { background-color: white; }
+
+
+.c3 .c3-axis-x g,
+.c3 .c3-axis-y g,
+.c3 .c3-axis-y2 g,
+.c3 .c3-axis-y-label,
+.c3 .c3-axis-y2-label,
+.c3 .c3-axis-x-label {
+    fill: #cc0000;
+}
+
+/* night vision */
+/* ************ */
+
+.night { background-color: black; }
+.night .button:enabled { background-color: DimGrey; color: White; }
+.night .button:disabled { background-color: Black; color: Grey; }
+
+.night .c3 .c3-axis-x path,
+.night .c3 .c3-axis-x line,
+.night .c3 .c3-axis-y path,
+.night .c3 .c3-axis-y2 path,
+.night .c3 .c3-axis-y line,
+.night .c3 .c3-axis-y2 line {
+    stroke: white;
+}
+
+.night .c3 .c3-axis-x g,
+.night .c3 .c3-axis-y g,
+.night .c3 .c3-axis-y2 g,
+.night .c3 .c3-axis-y-label,
+.night .c3 .c3-axis-y2-label,
+.night .c3 .c3-axis-x-label {
+    fill: red;
+    font-size:11px;  /* required for Firefox only? */
+}
+
+.night .c3 .c3-legend-item-data text,
+.night .c3 .c3-legend-item {
+    fill: white;
+    font-size:11px;  /* required for Firefox only? */
+}
+
+.night .c3 .c3-xgrids line,
+.night .c3 .c3-ygrids line {
+    stroke: DarkSlateGrey ;
+}
+
+/*when displaying the data on the chart */
+.night .c3 text.c3-text { 
+    fill: whitesmoke!important;
+    stroke: whitesmoke!important;
+    stroke-opacity: 0.3!important;
+}
+
+/* for the pathTip text color */
+.night .c3 .c3-tooltip-container {
+    color: #ccc;
+}
+.night .c3 .c3-tooltip {
+    background-color: #999!important;
+    font-size:11px;  /* required for Firefox on Windows only? */
+}
+
+.night .c3-tooltip tr {
+  border: 1px solid #ccc!important;
+}
+
+.night .c3-tooltip th {
+  background-color: #666!important;
+  color: #fff!important;
+}
+
+.night .c3-tooltip td {
+  background-color: #333!important;
+  border-left: 1px dotted #ccc!important;
+}
+
+.night .c3-tooltip .value {
+  text-align: right;
+  color: #fff
+}
+
+/* night or day vision */
+/* ******************* */
+.button.button.unstyled {
+  border: none;
+  padding: 0;
+  background: none;
+  margin-right: 1px;
+  height: 15px;
+  width: 15px;
+}
+
+/* useful if legend: {position: inset} is used in chart specs:   */
+.c3 .c3-legend-background { opacity: 0; }
+
+/* bottom */
+
+
