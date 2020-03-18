@@ -92,7 +92,7 @@ Here is the specification for the chart shown at the top of this section:
 
 ```javascript
 const Wind_speeds_10min = 
-    { stripChartName: "Wind_speeds_10min",   // stripChartName MUST be same as the containing object name
+    { stripChartName: "Wind_speeds_10min",   // stripChartName MUST be same as the containing object name and hence follow javascript variables naming rules (see https://javascript.info/variables#variable-naming)
         timeWindow: 600,            // 10min
         avgInterval: 2,             // 2 sec
         intervalsPerRefresh: 2,     // default 1
