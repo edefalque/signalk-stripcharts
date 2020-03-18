@@ -7,7 +7,7 @@ Legends identify by abbreviations what paths are charted. Here is a chart with a
 
 The above chart has a y-axis on the left hand side. Optionally, as shown on the chart below (right hand side), a y2-axis may also be defined with distinct units. The dotted line corresponds to the plot according to the y2 axis, here the apparent wind angle (AWA).
 
-![simple chart + y2](https://github.com/edefalque/signalk-stripcharts/blob/master/pics/Wind.png)
+![simple chart + y2](https://github.com/edefalque/signalk-stripcharts/blob/master/pics/Wind.PNG)
 
 The browser window can display two such charts on top of each other.
 
@@ -47,7 +47,7 @@ Modify the query parameters (server & specs) as needed, e.g. if you have defined
 
 These buttons affect the size and position of the plotting lines corresponding to the axis :
 
-![simple chart + y2](https://github.com/edefalque/signalk-stripcharts/blob/master/pics/buttons-axis.png)
+![simple chart + y2](https://github.com/edefalque/signalk-stripcharts/blob/master/pics/buttons-axis.PNG)
 
 From left to right: 
 - zoom in
@@ -63,7 +63,7 @@ If you choose the same chart as the other one displayed, the chart will be displ
 
 ### Main buttons
 
-![simple chart + y2](https://github.com/edefalque/signalk-stripcharts/blob/master/pics/buttons-window.png)
+![simple chart + y2](https://github.com/edefalque/signalk-stripcharts/blob/master/pics/buttons-window.PNG)
 
 From left to right:
 - toggle day/night display
