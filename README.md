@@ -3,11 +3,11 @@
 A stripchart displays the most recent boat data (from one or more Signal K paths) as a graph along a time axis (x-axis).
 Legends identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window:
 
-<img src="./pics/wind-speeds.png" width="780" height="292"/>
+![simple chart](./pics/wind-speeds.png)
 
 The above chart has a y-axis on the left hand side. Optionally, as shown on the chart below (right hand side), a y2-axis may also be defined with distinct units. The dotted line corresponds to the plot according to the y2 axis, here the apparent wind angle (AWA).
 
-<img src="./pics/Wind.png" width="780" height="292"/>
+![simple chart + y2](./pics/Wind.png)
 
 The browser window can display two such charts on top of each other.
 
@@ -47,7 +47,7 @@ Modify the query parameters (server & specs) as needed, e.g. if you have defined
 
 These buttons affect the size and position of the plotting lines corresponding to the axis :
 
-<img src="./pics/buttons-axis.png" width="150" height="22"/>
+![simple chart + y2](./pics/buttons-axis.png)
 
 From left to right: 
 - zoom in
@@ -63,12 +63,12 @@ If you choose the same chart as the other one displayed, the chart will be displ
 
 ### Main buttons
 
-<img src="./pics/buttons-window.png" width="110" height="30"/>
+![simple chart + y2](./pics/buttons-window.png)
 
 From left to right:
 - toggle day/night display
 - toggle pause/play plotting
-- disconnect from Signal K server (cannot reconnect without reloading the page)
+- disconnect from Signal K server (reload the page if you want to connect again)
 
 They apply to the whole window.
 
@@ -90,7 +90,7 @@ When data stops coming for a particular path, it is "hotdecked" from the last da
 A chart specification is provided as a javascript object.
 Here is the specification for the chart shown at the top of this section:
 
-```
+```javascript
 const Wind_speeds_10min = 
     { stripChartName: "Wind_speeds_10min",   // stripChartName MUST be same as the containing object name
         timeWindow: 600,            // 10min
@@ -183,8 +183,8 @@ It was developed with no or very limited prior knowledge of Linux, Javascript, H
 Therefore much technical improvement is of course possible.
 In particular the following improvements could be considered without structural changes:
 - [ ] Transpiling (Babel)  
-- [ ] Minimification.  
-- [ ] Retrieval of boat data is inspired from Signal K websocket example. It could be possibly replaced by the more robust https://www.npmjs.com/package/@signalk/client   
+- [ ] Minification.  
+- [ ] Retrieval of boat data is inspired from Signal K websocket example. Possibly it could be replaced by the more robust https://www.npmjs.com/package/@signalk/client   
 
 Any hints are most welcome.
 
