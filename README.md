@@ -11,7 +11,7 @@ The above chart has a y-axis on the left hand side. Optionally, as shown on the 
 
 The browser window can display two such charts on top of each other.
 
-Now it's time to install and start using the default charts specifications provided. 
+Now it's time to install and start using the default charts specifications provided.
 
 ## Installation    ????
 
