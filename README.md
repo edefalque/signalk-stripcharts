@@ -1,7 +1,7 @@
 # signalk-stripcharts: generate strip charts from Signal K live boat data. 
 
 A stripchart displays the most recent boat data (from one or more Signal K paths) as a graph along a time axis (x-axis).
-Legends identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window:
+Legends identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window plotting the true wind speed (TWS) and apparent wind speed (AWS):
 
 ![simple chart](readme1.PNG)
 
@@ -9,7 +9,7 @@ The above chart has a y-axis on the left hand side. Optionally, as shown on the 
 
 ![simple chart + y2](readme2.PNG)
 
-The browser window can display two such charts on top of each other. For instance you may have wind speeds on the top chart and boat speeds on the bottom chart. Those two charts can be selected wiht a dropdown list from a set of active charts.
+The browser window can display two such charts on top of each other. For instance you may have wind speeds on the top chart and boat speeds on the bottom chart. Those two charts can be selected with a dropdown list from a set of active charts.
 
 Now it's time to install and start using the default charts specifications provided.
 
