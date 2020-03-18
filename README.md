@@ -3,11 +3,11 @@
 A stripchart displays the most recent boat data (from one or more Signal K paths) as a graph along a time axis (x-axis).
 Legends identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window plotting the true wind speed (TWS) and apparent wind speed (AWS):
 
-![simple chart](./.PNG/readme1.PNG)
+![simple chart](./PNG/readme1.PNG)
 
 The above chart has a y-axis on the left hand side. Optionally, as shown on the chart below (right hand side), a y2-axis may also be defined with its own unit. The dotted line corresponds to the plot according to the y2 axis, here the apparent wind angle (AWA).
 
-![simple chart + y2](./.PNG/readme2.PNG)
+![simple chart + y2](./PNG/readme2.PNG)
 
 The browser window can display two such charts on top of each other. For instance you may have wind speeds on the top chart and boat speeds on the bottom chart, or wind speeds with two different time windows, say 10 minutes and 24 hours. Those two charts can be selected with a dropdown list from a set of active charts.
 
@@ -44,7 +44,7 @@ You may wish to bookmark the launched page(s) for easier later launching. Modify
 
 These buttons affect the size and position of the plotted lines corresponding to the axis :
 
-![axis buttons](./.PNG/readme3.PNG)
+![axis buttons](./PNG/readme3.PNG)
 
 From left to right: 
 - zoom in
@@ -60,7 +60,7 @@ If you choose the same chart as the other one displayed, the chart will be displ
 
 ### Main buttons
 
-![window buttons](./.PNG/readme4.PNG)
+![window buttons](./PNG/readme4.PNG)
 
 From left to right:
 - toggle day/night display
