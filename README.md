@@ -85,7 +85,7 @@ For each path the charted value can be the average, the maximum and/or the minim
 When data stops coming for a particular path, it is "hotdecked" from the last data received until new data arrives; hotdecking stops after twenty seconds and thereafter the corresponding data will be 0 (in Signal K unit) indicating probably that the corresponding instrument was disconnected or switched off.
 
 A chart specification is provided as a javascript object.
-Here is the specification for the chart shown at the top of this section:
+Here is the specification for the chart shown at the top of this document:
 
 ```javascript
 const Wind_speeds_10min = 
