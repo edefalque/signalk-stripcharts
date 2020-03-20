@@ -219,7 +219,7 @@ class stripChart {
 
     log("s","this._chartSpecs", this._chartSpecs);
 
-    log("b","################################## SC ########################################");
+    log("b","################################## SC ########################################","");
     log("b","this._SCname", this._SCname);
     log("b","this._path_Index", this._path_Index); 
     log("b","this._pathIsKelvin", this._pathIsKelvin); 
@@ -232,7 +232,7 @@ class stripChart {
     log("b","this._convTuples", this._convTuples);
     log("b","this._aggregators", this._aggregators);
     log("b","this._colorPalette", this._colorPalette);
-    log("b","################################## END SC ########################################");
+    log("b","################################## END SC ########################################","");
 
     function formatxTick(z, avgInterv) {  
       // depending on axis scale, time will be shown as (e.g.) 2d5h or 5h26m or 9m12s (also in tooltips)

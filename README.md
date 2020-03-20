@@ -1,4 +1,4 @@
-# signalk-stripcharts: generate strip charts from Signal K live boat data. 
+# Signalk-stripcharts: generate strip charts from Signal K live boat data. 
 
 A stripchart displays the most recent boat data (from one or more Signal K paths) as a graph along a time axis (x-axis).
 Legends identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window plotting the true wind speed (TWS) and apparent wind speed (AWS):
@@ -15,23 +15,30 @@ Now it's time to install and start using the default charts specifications provi
 
 ## Installation
 
-signalk-stripcharts comes with all required dependencies (including c3 charting library and d3 visualization library).
+Signalk-stripcharts comes with all required dependencies (including c3 charting library and d3 visualization library).
 
-### Installation on a client-only device:
+Choose one of the following methods as applicable.
+
+### Available as a Signal K Webapp:
+
+If Signal K node server (https://github.com/SignalK/signalk-server-node) is installed on your server:
+- log in to the Signal K dashboard
+- install Signalk-stripcharts from its Webapps Appstore
+- restart the dashboard
+You can now start Signalk-stripcharts launcher from the Webapps Appstore Installed apps
+
+### Installation on a client device:
 - Download the ZIP file from https://github.com/edefalque/signalk-stripcharts and unzip in a folder
 
 ### Installation on a node server (typically the boat Signal K server):
 - Use npm: [sudo] npm install signalk-stripcharts
-
-This will install signalk-stripcharts and its dependencies c3 and d3 under ./node_modules.
-
-signalk-stripcharts could be set as a Signal K Webbapp and started from the Signal K user interface.
+This will install Signalk-stripcharts and its dependencies c3 and d3 under the closest node_modules folder higher up in the hierarchy.
 
 ## Basic usage
 
 Use index.html as a launch menu.
 
-Here you can choose the Signal K server and choose a set of charts, then push the "Launch signalk-stripcharts " button.
+Here you can choose the Signal K server and choose a set of charts, then push the "Launch Signalk-stripcharts" button.
 
 When the charts are displayed:
 - hover on a legend: the corresponding plot is highlighted, the others dimmed; the corresponding Signal K path is displayed above the legend
@@ -42,7 +49,7 @@ You may wish to bookmark the launched page(s) for easier later launching. Modify
 
 ### y- and y2-axis buttons
 
-These buttons affect the size and position of the plotted lines corresponding to the axis :
+These buttons affect the size and position of the plotted lines corresponding to the axis:
 
 ![axis buttons](./PNG/readme3.PNG)
 
@@ -84,7 +91,7 @@ A chart is primarily specified by:
 For each path the charted value can be the average, the maximum and/or the minimum of the values received from Signal K during the averaging period. The averaging period (avgInterval) should be set such that the ratio timeWindow/avgInterval is between 300 and 1000 (i.e. a reasonable number of plots along the timeWindow); avgInterval must be longer than the sampling period defined in the Signal K subscription period (subscribePolicy.period), which is typically 1 second. By default, the chart is refreshed every avgInterval (provided that some new data has come for that chart).
 When data stops coming for a particular path, it is "hotdecked" from the last data received until new data arrives; hotdecking stops after twenty seconds and thereafter the corresponding data will be 0 (in Signal K unit) indicating probably that the corresponding instrument was disconnected or switched off.
 
-A chart specification is provided as a javascript object.
+A chart specification is provided as a Javascript object.
 Here is the specification for the chart shown at the top of this document:
 
 ```javascript
@@ -126,48 +133,50 @@ The following specifications files are provided at installation:
 - engines.js  (provided as a partially tested example)
 Each of them can be started in its own browser tab and run concurrently.
 
-New specifications files can be easily derived from those. Copy them and edit them with a text editor, or better with a code editor such as Geany or Visual Studio Code.
 In a specification file, a chart specification can be derived from another chart and only the properties that differ need to be specified (e.g. a two-hours chart can be derived from a ten-minutes chart, with most of the properties inherited). Inheritance is provided at the first level of properties only.
 
-Ample comments are provided in the installed specifications files for those features that were not explained above.
-
-signalk-stripcharts buffers having no persistency, they cannot be used to store the history.
+Signalk-stripcharts buffers having no persistency, they cannot be used to store the history.
 Persistency and more powerful charting capabilities can be provided with InfluxDB and Grafana as explained here (https://github.com/tkurki/signalk-to-influxdb/blob/master/README.md) or could be provided with the help of the history capability of Signal K if available.
 
 ## Customization
+Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may be then less accessible. If installed on a Raspberry PI from Signal K webstore, they will probably be in /home/pi/.signalk/node_modules/signalk-stripcharts/specs/ .
 ### Options
-Options governing all charts are given in ./js/stripcharts_options.js.
+Options governing all charts are given in signalk-stripcharts/js/stripcharts_options.js.
 See comments in the file.
-### Chart specifications and colors
-Ample comments are provided in the specification files.
+### Chart specifications
+The specifications files are installed in signalk-stripcharts/specs/ .Ample comments are provided for those features that were not explained above.
 
-The launch menu provides a button to list all paths and sources currently represented in the Signal K server.
-Switch on all your instruments and systems in order to have a full list of what you can chart.
+Some specs refer to paths that are unlikely to be provided by most Signal K servers. They are provided as examples.
 
-Colors can be specified per legend at the bottom of the chart specifications set in order to insure consistency accross multiple charts of a same set.
+New specifications files can be easily derived from those provided at installation. Copy them under another name and edit them with a text editor, or better with a code editor such as Geany or Visual Studio Code. 
+
+The launch menu has a button that lists all paths and sources currently provided by the selected Signal K server. Switch on all your instruments and systems in order to obtain a full list of what you can chart.
+
+### Legends and lines colors
+Colors can be specified per legend at the bottom of the chart specifications file in order to insure consistency accross multiple charts of a same set.
 If not provided colors will be assigned automatically by the c3 library.
 See sail.js for how to assign colors.
 ### Units
-./specs/units provides the list of Signal K units and charting units, with the conversion factors and algorithms.
+signalk-stripcharts/specs/units provides the list of Signal K units and charting units, with the conversion factors and algorithms.
 It also provides the following default properties for the y and y2 axis as a function of the charting unit:
 - label
 - range (min and max)
 - tick count and format
 
-Those can be overidden in the chart specs.
+Those can be overridden in the chart specs.
 
 A special unit "Percent" is provided. It allows to plot values of different units on a same "Percent" y or y2 axis by providing reference values in the Signal K unit for 0% and for 100%. See engines.js for an example with comments.
 
 ## Browser compatibility
 
-signalk-stripcharts uses ECMASript 2015 (ES6).
+Signalk-stripcharts uses ECMAScript 2015 (ES6).
 It was mostly developed on Raspbian Chromium 72.0.3626.121 and Windows 10 Chrome 80.0.3987.132.
 
 It seems to also work fine on:
 - Windows 10 with Edge 18362 and with Firefox-ESR 68.6.0esr
 - Raspbian with Firefox-ESR 52.9.0
 
-Recent non-ESR versions of Firefox seems to show some svg rendition problems.
+Recent non-ESR versions of Firefox show some svg rendition problems.
 
 ## CPU requirements
 
@@ -183,9 +192,10 @@ Some tracing options are provided in ./js/stripcharts_options.js. Tracing occurs
 ## Functional improvements
 - [ ] Filter by sources: in a chart specs, at path level, specify sources wanted as an array
 - [ ] Filter out from the specs the path/sources which are never provided by the signalk server and/or derive missing path values from other paths when possible
+- [ ] Provide a better way to create/manage custom specs files and preserve them when installing new versions of the package
 
 ## Technical improvements
-signalk-stripcharts is essentially a html/javascript front-end application.
+Signalk-stripcharts is essentially an html/javascript front-end application.
 It was developed with no or very limited prior knowledge of Linux, Javascript, HTML, CSS, Signal K, Node.js and other js-related tools.
 Therefore much technical improvement is of course possible.
 In particular the following improvements could be considered without structural changes:

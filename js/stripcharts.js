@@ -24,8 +24,22 @@ script.src = "./specs/" + specsScript + ".js";
 console.log("specs file is: " + script.src);
 document.body.append(script);  // specs declaration appended to body
 
-/*****************************************************************/
+/*******************************************************************
+** get server address from URL server parameter if any,
+** else use location from which page is loaded
+**/
+var server = "";
+if (urlParams.has("server")) {
+    server = urlParams.get("server");
+}
+else {
+    server = window.location.host;
+    // alert("server param missing in URL, trying with " + server);
+}
 
+var ws = {};   // declare ws (later assigned to websocket)
+
+/*****************************************************************/
 
 var startTime = 0;
 // refreshInterval between load method invocation, set later as MIN(avgInterval * intervalsPerRefresh) across all SC_objects
@@ -45,7 +59,7 @@ var upperChartObj = {};
 var lowerChartObj = {};
 var noneChartObj = {};
 
-// constructing stripChart objects (after stripChartsSpecs is loaded)
+// constructing stripChart objects (after stripChartsSpecs script is loaded)
 
 script.onload = function() {          
     document.getElementsByTagName("title")[0].innerHTML = stripChartsSpecs.name;
@@ -250,26 +264,12 @@ script.onload = function() {
     refreshDisabled = false;
     setInterval(function () {refreshCharts();}, refreshInterval);   //  <<<<<< REFRESH <<<<<<<<<
 
-} // end of script.onload
+// } // end of script.onload 
 
 // =====================================================================
 // ========   websocket on signalK: get and process delta's  ===========
 
-// get server address from URL server parameter if any
-var server = "";
-if (urlParams.has("server")) {
-    server = urlParams.get("server");
-}
-else {
-    server = window.location.host;
-    // alert("server param missing in URL, trying with " + server);
-}
-
-var wsMsg = {};
-
-var dateObj = new Date(0);
-
-var ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + server + "/signalk/v1/stream?subscribe=none");
+ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + server + "/signalk/v1/stream?subscribe=none");
 
 ws.onopen = function() { 
         log("w","webSocket ws opened on: ", ws.url);
@@ -308,6 +308,7 @@ window.addEventListener("onunload", function(event) {
 );
 
 // listen to signalK's deltas
+var wsMsg = {};
 var wsMsgCount = 0;
 var timeOffset = 0;
 var timeRef = 0;
@@ -318,6 +319,7 @@ ws.onmessage = function(event) {
         wsMsg = JSON.parse(event.data);
         if (typeof wsMsg.timestamp == "string") {
             console.log("Version msg: " + JSON.stringify(wsMsg));
+            log("w","wsMsg", wsMsg);
             timeRef = Date.parse(wsMsg.timestamp);
             return;
         }
@@ -374,6 +376,7 @@ function genPointsFromDeltas(updArray) {
     }        
 }
 
+} // end of script.onload   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /* GLOBAL FUNCTIONS
 ** ****************
