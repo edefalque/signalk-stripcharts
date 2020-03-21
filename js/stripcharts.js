@@ -25,8 +25,25 @@ console.log("specs file is: " + script.src);
 document.body.append(script);  // specs declaration appended to body
 
 /*******************************************************************
+** get logTypes string from URL server parameter if any,
+** replace "all" by "sbweo"
+**/
+if (urlParams.has("logTypes")) {
+    logTypes = urlParams.get("logTypes");
+}
+if (logTypes == "all") { logTypes = "sbweo"; }
+
+/*******************************************************************
+** get timeTol from URL server parameter if any
+**/
+if (urlParams.has("timeTol")) {
+    timeTol = urlParams.get("timeTol");
+}
+if (typeof timeTol != "number") { timeTol = 0; }
+
+/*******************************************************************
 ** get server address from URL server parameter if any,
-** else use location from which page is loaded
+** else use location which page is loaded from
 **/
 var server = "";
 if (urlParams.has("server")) {
@@ -61,7 +78,7 @@ var noneChartObj = {};
 
 // constructing stripChart objects (after stripChartsSpecs script is loaded)
 
-script.onload = function() {          
+script.onload = function() {        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<      
     document.getElementsByTagName("title")[0].innerHTML = stripChartsSpecs.name;
 
     for (var v of stripChartsSpecs.stripCharts) {
@@ -290,7 +307,7 @@ ws.onclose = function(event) {
         upperChartObj.setPauseLabel("Disconnected on");
         lowerChartObj.setPauseLabel("Disconnected on");
 		log("e","webSocket ws closed, code: ", event.code);
-        console.log("SK delta sources with invalid timeStamps: " + JSON.stringify(countersSkipped));
+        console.log('SK delta sources with nbr of invalid timeStamps: ' + JSON.stringify(countersSkipped));
 		console.log("webSocket ws closed, code: " + event.code);
         }
 
@@ -349,8 +366,8 @@ function genPointsFromDeltas(updArray) {
         point.stamp = Date.parse(upd.timestamp);      // convert date string to msec
         if (timeRef == 0) { timeRef = point.stamp; }  // timestamp was not present in context msg, use 1st upd
         timeOffset = Math.abs(timeRef - point.stamp);
-        if (timeOffset > timeToleranceSec*1000) {
-            logSkipped(upd.source);  
+        if (timeTol != 0 && timeOffset > timeTol*1000) {  // time tolerance check
+            logSkipped(upd.source, upd.timestamp);  
             return;      // skip out-of-tolerance timestamp
         }
         timeRef = point.stamp;       // new timeRef
@@ -366,11 +383,11 @@ function genPointsFromDeltas(updArray) {
         }
     }
     
-    function logSkipped(source) {    // count them by source and log a few of them
+    function logSkipped(source, timeStamp) {    // count them by source and log a few of them
         let signature = JSON.stringify(source);
         if (typeof countersSkipped[signature] == "number") {
             countersSkipped[signature]++;
-            if (countersSkipped[signature] < 11) { console.log("Invalid timeStamp" + signature); }
+            if (countersSkipped[signature] < logMax) { console.log("Invalid timeStamp " + timeStamp + " from " + signature); }
         }
         else { countersSkipped[signature] = 1; }
     }        

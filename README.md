@@ -143,6 +143,9 @@ Currently, customization is easy if the package is installed on the client, but 
 ### Options
 Options governing all charts are given in signalk-stripcharts/js/stripcharts_options.js.
 See comments in the file.
+
+The following options can also be entered as query parameters after the url when launching stripcharts.html: timeTol and logTypes. They will then override the values in stripcharts_options.js.
+
 ### Chart specifications
 The specifications files are installed in signalk-stripcharts/specs/ .Ample comments are provided for those features that were not explained above.
 
