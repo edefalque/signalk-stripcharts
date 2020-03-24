@@ -142,14 +142,14 @@ Persistency and more powerful charting capabilities can be provided with InfluxD
 Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may be then less accessible. If installed on a Raspberry PI from Signal K webstore, they will probably be in /home/pi/.signalk/node_modules/signalk-stripcharts/specs/ .
 ### Options
 Options governing all charts are given in signalk-stripcharts/js/stripcharts_options.js.
-See comments in the file.
+See comments in the file. Those comments explain how time is managed in signalk-stripcharts.
 
-The following options can also be entered as query parameters after the url when launching stripcharts.html: timeTol and logTypes. They will then override the values in stripcharts_options.js.
+The following options can also be entered as query parameters after the url when launching stripcharts.html: timeTolSec and logTypes. They will then override the values in stripcharts_options.js.
 
 ### Chart specifications
-The specifications files are installed in signalk-stripcharts/specs/ .Ample comments are provided for those features that were not explained above.
+The specifications files are installed in signalk-stripcharts/specs/. Ample comments are provided for those features that were not explained above.
 
-Some specs refer to paths that are unlikely to be provided by most Signal K servers. They are provided as examples.
+Some specs refer to paths that are unlikely to be provided by many current Signal K servers.
 
 New specifications files can be easily derived from those provided at installation. Copy them under another name and edit them with a text editor, or better with a code editor such as Geany or Visual Studio Code. 
 
@@ -178,12 +178,14 @@ It was mostly developed on Raspbian Chromium 72.0.3626.121 and Windows 10 Chrome
 It seems to also work fine on:
 - Windows 10 with Edge 18362 and with Firefox-ESR 68.6.0esr
 - Raspbian with Firefox-ESR 52.9.0
+- Androïd with Chrome 78.0.3904.108 (on mobile phone, it is recommended to display one chart only)
 
 Recent non-ESR versions of Firefox show some svg rendition problems.
 
-## CPU requirements
+## CPU and memory requirements
 
-On a Raspberry Pi 3B+ with Chromium: a burst of approximately 20% cpu consumption is observed when the charts are refreshed (typically every 4 seconds for a 10 minute timeWindow, or every 10 seconds for a 2 hour timeWindow). This is only when the window tab is visible and "playing".
+On a Raspberry Pi 3B+ with Chromium: a short burst of approximately 50% cpu consumption is observed when 2 charts corresponding to 6 paths are refreshed on the window (typically every 4 seconds for 10 minute timeWindow charts, or every 10 seconds for 2 hour timeWindow charts); this is only when the window tab is visible and "playing". Augment avgInterval and/or intervalsPerRefresh if you want to reduce the frequency of those bursts.
+Between refreshing bursts, managing the data collection and aggregation for 10 charts, each with approximately 3 paths, takes less than 1% CPU. For the same amount of charts and paths, memory footprint is about between 40K and 60K at all time.
 
 ## Troubleshooting
 

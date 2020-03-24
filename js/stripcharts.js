@@ -9,20 +9,20 @@
 document.getElementById("y2UpperCtl").style.visibility = "hidden";
 document.getElementById("y2LowerCtl").style.visibility = "hidden";
 // get specs script from URL "specs" parameter if any
-var specsScript = "missing_specs.js";
+var specsFileName = "missing_specs.js";
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 if (urlParams.has("specs")) {
-    specsScript = urlParams.get("specs");
+    specsFileName = urlParams.get("specs");
 }
 else {
     alert("specs parameter missing in URL parameters");
 }
 // dynamically load stripCharts specs file
-var script = document.createElement('script');
-script.src = "./specs/" + specsScript + ".js";
-console.log("specs file is: " + script.src);
-document.body.append(script);  // specs declaration appended to body
+var specs = document.createElement('script');
+specs.src = "./specs/" + specsFileName + ".js";
+console.log("specs file is: " + specs.src);
+document.body.append(specs);  // specs declaration appended to body
 
 /*******************************************************************
 ** get logTypes string from URL server parameter if any,
@@ -34,12 +34,12 @@ if (urlParams.has("logTypes")) {
 if (logTypes == "all") { logTypes = "sbweo"; }
 
 /*******************************************************************
-** get timeTol from URL server parameter if any
+** get timeTolSec from URL server parameter if any
 **/
-if (urlParams.has("timeTol")) {
-    timeTol = urlParams.get("timeTol");
+if (urlParams.has("timeTolSec")) {
+    timeTolSec = urlParams.get("timeTolSec");
 }
-if (typeof timeTol != "number") { timeTol = 0; }
+if (typeof timeTolSec != "number") { timeTolSec = 0; }
 
 /*******************************************************************
 ** get server address from URL server parameter if any,
@@ -55,10 +55,10 @@ else {
 }
 
 var ws = {};   // declare ws (later assigned to websocket)
+var wsWasOpen = false;
 
 /*****************************************************************/
 
-var startTime = 0;
 // refreshInterval between load method invocation, set later as MIN(avgInterval * intervalsPerRefresh) across all SC_objects
 var refreshInterval = 20000;      // absolute max of 20sec
 var refreshDisabled = true;
@@ -78,7 +78,7 @@ var noneChartObj = {};
 
 // constructing stripChart objects (after stripChartsSpecs script is loaded)
 
-script.onload = function() {        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<      
+specs.onload = function() {        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<      
     document.getElementsByTagName("title")[0].innerHTML = stripChartsSpecs.name;
 
     for (var v of stripChartsSpecs.stripCharts) {
@@ -281,14 +281,14 @@ script.onload = function() {        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     refreshDisabled = false;
     setInterval(function () {refreshCharts();}, refreshInterval);   //  <<<<<< REFRESH <<<<<<<<<
 
-// } // end of script.onload 
-
 // =====================================================================
 // ========   websocket on signalK: get and process delta's  ===========
 
 ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + server + "/signalk/v1/stream?subscribe=none");
 
-ws.onopen = function() { 
+
+ws.onopen = function() {
+        wsWasOpen = true;
         log("w","webSocket ws opened on: ", ws.url);
         log("b","subscribePaths", subscribePaths);
         subscribePaths.forEach(populateSubscription);
@@ -328,24 +328,39 @@ window.addEventListener("onunload", function(event) {
 var wsMsg = {};
 var wsMsgCount = 0;
 var timeOffset = 0;
-var timeRef = 0;
+var skTimeStarted = 0;
+var skTimeMsg = 0;  // NOTE: skTime* means time by reference to time received in version msg
 var countersSkipped = {};   //  will hold counters of skipped source element with invalid timeStamps
 
 ws.onmessage = function(event) {
         wsMsgCount++;
+        let cliTimeMsg = new Date().getTime();
         wsMsg = JSON.parse(event.data);
         if (typeof wsMsg.timestamp == "string") {
             console.log("Version msg: " + JSON.stringify(wsMsg));
             log("w","wsMsg", wsMsg);
-            timeRef = Date.parse(wsMsg.timestamp);
+            skTimeStarted = Date.parse(wsMsg.timestamp);  // constant
+            timeOffset = cliTimeMsg - skTimeStarted;  // constant
             return;
         }
         else if (!wsMsg.context) {
             console.log("Unknown msg type, skipped: " + JSON.stringify(wsMsg) );
             return;
         }
-
+        if (skTimeStarted == 0) {    // should not happen !!
+            alert("No time received from SK, using client time");
+            skTimeStarted = cliTimeMsg;
+            timeOffset = cliTimeMsg - skTimeStarted;  // constant, near 0
+        }
+        skTimeMsg = cliTimeMsg - timeOffset;
         if (wsMsgCount < 20) {log("w","wsMsg", wsMsg)};
+
+        // stop test on demo server:
+        if (((skTimeMsg - skTimeStarted) > (maxRunMinutes * 60000)) && server == "demo.signalk.org") {   
+            console.log("Close socket on maxRunMinutes = " + maxRunMinutes);
+            ws.close();
+            return;
+            }
 
         genPointsFromDeltas(wsMsg.updates);
 }
@@ -360,19 +375,16 @@ function populateSubscription(x, ix) {
 
 function genPointsFromDeltas(updArray) {
     // extract boat data from msg; for each path, pushPoint to all stripCharts object instances (each will ignore unused paths)
-//    let delta = {};
-    let point = {path_:"", stamp:0, value:0};
+    let point = {path_:"", skTime:0, value:0};
     for (var upd of updArray) { 
-        point.stamp = Date.parse(upd.timestamp);      // convert date string to msec
-        if (timeRef == 0) { timeRef = point.stamp; }  // timestamp was not present in context msg, use 1st upd
-        timeOffset = Math.abs(timeRef - point.stamp);
-        if (timeTol != 0 && timeOffset > timeTol*1000) {  // time tolerance check
+        let timeDiff = Math.abs(skTimeMsg - Date.parse(upd.timestamp));
+        if (timeTolSec != 0 && timeDiff > timeTolSec*1000) {  // time tolerance check
             logSkipped(upd.source, upd.timestamp);  
             return;      // skip out-of-tolerance timestamp
         }
-        timeRef = point.stamp;       // new timeRef
         // get path and value from wsMSG.updates
         for (var delta of upd.values) {
+            point.skTime = skTimeMsg;
             point.path_ = delta.path.replace(/\./g,"_");  // replace all "." with "_" in path giving path_
             point.value = delta.value;
             if (wsMsgCount < 20) {log("o","point", point)};
@@ -384,16 +396,16 @@ function genPointsFromDeltas(updArray) {
     }
     
     function logSkipped(source, timeStamp) {    // count them by source and log a few of them
-        let signature = JSON.stringify(source);
-        if (typeof countersSkipped[signature] == "number") {
-            countersSkipped[signature]++;
-            if (countersSkipped[signature] < logMax) { console.log("Invalid timeStamp " + timeStamp + " from " + signature); }
+        let src = JSON.stringify(source);
+        if (typeof countersSkipped[src] == "number") {
+            countersSkipped[src]++;
+            if (countersSkipped[src] < logMax) { console.log("Invalid timeStamp " + timeStamp + " from " + src); }
         }
-        else { countersSkipped[signature] = 1; }
+        else { countersSkipped[src] = 1; }
     }        
 }
 
-} // end of script.onload   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+} // end of specs.onload   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /* GLOBAL FUNCTIONS
 ** ****************

@@ -186,8 +186,8 @@ class stripChart {
 
     this._rows = [];
     
-    this._lastPointStamp = 0;   // timestamp (msec) of last point received
-    this._lastRowTime = 0;      // timestamp (msec) when last row was added to this._rows
+    this._lastPointTime = 0;   // skTime (msec) of last point received
+    this._lastRowTime = 0;      // skTime (msec) when last row was added to this._rows
     this._rowCount = 0;
     this._rowCountSinceRefresh = 0;
     this._chartHeight = Math.floor(window.innerHeight/2 - 100);
@@ -403,7 +403,7 @@ class stripChart {
         }
 
     // set or reset pauseLabel depending on ws status and pause status
-    if  (ws.readyState == ws.CLOSED) {
+    if  (wsWasOpen && ws.readyState == ws.CLOSED) {
         this.setPauseLabel("Disconnected on");
     } else if (chartPaused) {
         this.setPauseLabel("Paused on");
@@ -467,30 +467,23 @@ class stripChart {
 
   
   pushPoint(point) {
-        // point = {path_:"a_Path", stamp:"timeStampMsec", value:aNumber}
+        // point = {path_:"a_Path", skTime:msec, value:aNumber}
         
         if (this._SCname == "none") { return; }
 
-        this._lastPointStamp = point.stamp;
+        this._lastPointTime = point.skTime;
 
         if (this._lastRowTime == 0) {
           // initialize _lastRowTime from first received point in order to generate 1st row after first 0.5 sec
-          this._lastRowTime = point.stamp - this._avgInterval + 500;
-          startTime = point.stamp;  // for stopping test on elapsed time
+          this._lastRowTime = point.skTime - this._avgInterval + 500;
         }
         //  if avgInterval ended, generate one row, add it to this._rows, init all (AVG/MAX/COUNT), set this._lastRowTime
-        if ((point.stamp - this._lastRowTime) > this._avgInterval) {   // time to generate newRow
+        if ((point.skTime - this._lastRowTime) > this._avgInterval) {   // time to generate newRow
             let newRow = buildNewRow(this._aggregators, this._aggrSelectors, this._convTuples, this._lastRowTime);
             this._lastRowTime = this._lastRowTime + this._avgInterval;
             log("o","newRow", newRow);
             this._rowCount++;
             this._rowCountSinceRefresh++;
-            // stop test on demo server:
-            if (((this._lastRowTime - startTime) > (maxRunMinutes * 60000)) && server == "demo.signalk.org") {   
-              console.log("close socket on maxRunMinutes = " + maxRunMinutes);
-              ws.close();
-              return;
-            }
             if (this._rows.unshift(newRow) > this._rowsMaxLength) {this._rows.pop();} // unshift, and pop as needed
             for (var z of this._aggregators) { z.COUNT = 0 }
         }
@@ -520,7 +513,7 @@ class stripChart {
       obj.lastAVG = obj.AVG;
       obj.lastMAX = obj.MAX;
       obj.lastMIN = obj.MIN
-      obj.lastStamp = point.stamp;
+      obj.lastStamp = point.skTime;
       return;
       }
       
