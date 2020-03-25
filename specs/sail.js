@@ -5,8 +5,9 @@
 //=================== Wind speeds 10min, 2h, 24h =======================
 
 const Wind_speeds_10min = 
-    { stripChartName: "Wind_speeds_10min",   // stripChartName MUST be same as the containing object name
-        timeWindow: 600,            // 10min
+    // for javascript variables naming rules see https://javascript.info/variables#variable-naming
+    { stripChartName: "Wind_speeds_10min",   // use preferably the same as the containing object name
+        timeWindow: 10*60,          // 10min = 10 * 60
         avgInterval: 2,             // 2 sec
         intervalsPerRefresh: 2,     // default 1
         x: { label: "min/sec ago", tickCount: 11 },   // a tick every min (10, + 1 for zero)

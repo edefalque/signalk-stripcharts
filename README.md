@@ -28,7 +28,7 @@ If Signal K node server (https://github.com/SignalK/signalk-server-node) is inst
 - click on the install icon next to the version number
 - when installation is finished, click on the dashboard restart button
 
-You can now start signalk-stripcharts launcher from the dashboard Webapps/installed applications list.
+You can now start signalk-stripcharts launcher from the dashboard Webapps menu.
 
 ### >> Install on a client device:
 - Download the ZIP file from https://github.com/edefalque/signalk-stripcharts and unzip in a folder.
@@ -107,8 +107,8 @@ Here is the specification for the chart shown at the top of this document:
 
 ```javascript
 const Wind_speeds_10min = 
-    { stripChartName: "Wind_speeds_10min",   // stripChartName MUST BE THE SAME as the containing object name
-    // and hence follows javascript variables naming rules (see https://javascript.info/variables#variable-naming)
+    // for javascript variables naming rules see https://javascript.info/variables#variable-naming
+    { stripChartName: "Wind_speeds_10min",   // use preferably the same as the containing object name
         timeWindow: 600,            // 10min
         avgInterval: 2,             // 2 sec
         intervalsPerRefresh: 2,     // default 1
@@ -144,6 +144,7 @@ The following specifications files are provided at installation:
 - sail.js
 - environment.js
 - engines.js  (provided as a partially tested example)
+
 Each of them can be started in its own browser tab and run concurrently.
 
 In a specification file, a chart specification can be derived from another chart and only the properties that differ need to be specified (e.g. a two-hours chart can be derived from a ten-minutes chart, with most of the properties inherited). Inheritance is provided at the first level of properties only.
