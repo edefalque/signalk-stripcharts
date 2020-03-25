@@ -17,28 +17,39 @@ Now it's time to install and start using the default charts specifications provi
 
 Signalk-stripcharts comes with all required dependencies (including c3 charting library and d3 visualization library).
 
-Choose one of the following methods as applicable.
+Choose one of the following methods as applicable or desired:
 
-### Available as a Signal K Webapp:
+### >> Install as a Signal K Webapp:
 
 If Signal K node server (https://github.com/SignalK/signalk-server-node) is installed on your server:
-- log in to the Signal K dashboard
-- install Signalk-stripcharts from its Webapps Appstore
-- restart the dashboard
-You can now start Signalk-stripcharts launcher from the Webapps Appstore Installed apps
+- login to the Signal K dashboard
+- open the left hand side menu
+- select Appstore, then Available and find Signalk-Stripcharts (if not found, it is probably already installed)
+- click on the install icon next to the version number
+- when installation is finished, click on the dashboard restart button
 
-### Installation on a client device:
-- Download the ZIP file from https://github.com/edefalque/signalk-stripcharts and unzip in a folder
+You can now start signalk-stripcharts launcher from the dashboard Webapps/installed applications list.
 
-### Installation on a node server (typically the boat Signal K server):
+### >> Install on a client device:
+- Download the ZIP file from https://github.com/edefalque/signalk-stripcharts and unzip in a folder.
+
+(by default, it will be installed in a folder named signalk-stripcharts-master, rename folder to signalk-stripcharts)
+
+### >> Install on a node server (typically the boat Signal K server):
 - Use npm: [sudo] npm install signalk-stripcharts
-This will install Signalk-stripcharts and its dependencies c3 and d3 under the closest node_modules folder higher up in the hierarchy.
+
+This will install Signalk-stripcharts under the closest node_modules folder higher up in the hierarchy.
 
 ## Basic usage
 
-Use index.html as a launch menu.
+Start the launch menu:
+- If installed as a Signal K Webapps: from your client or on the Signal K server, access the Signal K dashboard, then start Signalk-Stripcharts from the dashboard Webapps menu
 
-Here you can choose the Signal K server and choose a set of charts, then push the "Launch Signalk-stripcharts" button.
+You may also:
+- If installed on a (Signal K) node server: from your client browser enter url *mynodeserver:port*/signalk-stripcharts
+- If installed on a client: double click on *...path...*/signalk-stripcharts/index.html
+
+On the launch menu you can choose the Signal K server (same or distinct from the node server where signalk-stripcharts is installed) and choose a set of charts, then push the "Launch Signalk-stripcharts" button. If you are connected to the Internet try first with the default selections of the launch menu.
 
 When the charts are displayed:
 - hover on a legend: the corresponding plot is highlighted, the others dimmed; the corresponding Signal K path is displayed above the legend
@@ -83,12 +94,12 @@ The result is governed by some general options, the chart specifications and the
 A chart is primarily specified by:
 - a name
 - the length of the time axis (timeWindow); typically 10 minutes, 2 hours or 24 hours
-- the averaging period (further explained below)
+- the averaging period (explained below)
 - the y axis range and unit (unit conversion is taken care of)
-- the same properties for the y2 axis, if present
-- the list of Signal K paths to be charted
+- the same properties for the optional y2 axis
+- the list of Signal K paths to be charted and corresponding abbreviated legends
 
-For each path the charted value can be the average, the maximum and/or the minimum of the values received from Signal K during the averaging period. The averaging period (avgInterval) should be set such that the ratio timeWindow/avgInterval is between 300 and 1000 (i.e. a reasonable number of plots along the timeWindow); avgInterval must be longer than the sampling period defined in the Signal K subscription period (subscribePolicy.period), which is typically 1 second. By default, the chart is refreshed every avgInterval (provided that some new data has come for that chart).
+For each path the charted value can be the average (AVG), the maximum (MAX) and/or the minimum (MIN) of the values received from Signal K during the averaging period. The averaging period (avgInterval) should be set such that the ratio timeWindow/avgInterval is between 300 and 1000 (i.e. a reasonable number of plots along the timeWindow); avgInterval must be longer than the sampling period defined in the Signal K subscription period (subscribePolicy.period option), which is typically 1 second. By default, the chart is refreshed every avgInterval (provided that some new data has come for that chart).
 When data stops coming for a particular path, it is "hotdecked" from the last data received until new data arrives; hotdecking stops after twenty seconds and thereafter the corresponding data will be 0 (in Signal K unit) indicating probably that the corresponding instrument was disconnected or switched off.
 
 A chart specification is provided as a Javascript object.
@@ -115,11 +126,13 @@ By default, the chart is refreshed every avgInterval (provided that some new dat
 
 Related chart specifications objects are grouped into a set.
 
-When the application is started, the following parameters must be provided:
-- the address and port of the Signal K server (defaults to the address & port the page is loaded from)
+When the application is started as an url, the following "query" parameters must be provided:
+- the address and port of the Signal K server (default to the address & port the page is loaded from)
 - the file name containing the chart specifications set (without .js extension).
 
-The application subscribes to the Signal K server deltas for all the paths in the set. The values are then continuously collected and aggregated for all charts in a set. At any one time, two charts can be displayed as selected by the user from drop down lists.
+The application subscribes to the Signal K server deltas for all the paths in the set. The values are then continuously collected and aggregated for all charts in a set.
+
+At any one time, two charts can be displayed as selected by the user from drop down lists.
 If the user selects the chart 'none' in one of the drop down lists, the remaining chart covers the whole window area.
 
 Charts can be paused. When paused, data collection continues. So the charts display will catch up when "unpaused". When the chart window is minimized or not in view, the charts are paused likewise and will catch up when brought to view. This minimizes processing load.
@@ -139,10 +152,10 @@ Signalk-stripcharts buffers having no persistency, they cannot be used to store 
 Persistency and more powerful charting capabilities can be provided with InfluxDB and Grafana as explained here (https://github.com/tkurki/signalk-to-influxdb/blob/master/README.md) or could be provided with the help of the history capability of Signal K if available.
 
 ## Customization
-Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may be then less accessible. If installed on a Raspberry PI from Signal K webstore, they will probably be in /home/pi/.signalk/node_modules/signalk-stripcharts/specs/ .
+Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may then be less accessible. If installed on a Raspberry PI from Signal K Appstore, they will probably be in /home/pi/.signalk/node_modules/signalk-stripcharts/specs/ .
 ### Options
 Options governing all charts are given in signalk-stripcharts/js/stripcharts_options.js.
-See comments in the file. Those comments explain how time is managed in signalk-stripcharts.
+See comments in the file. Some of those comments explain how time is managed in signalk-stripcharts.
 
 The following options can also be entered as query parameters after the url when launching stripcharts.html: timeTolSec and logTypes. They will then override the values in stripcharts_options.js.
 
@@ -173,19 +186,23 @@ A special unit "Percent" is provided. It allows to plot values of different unit
 ## Browser compatibility
 
 Signalk-stripcharts uses ECMAScript 2015 (ES6).
+
 It was mostly developed on Raspbian Chromium 72.0.3626.121 and Windows 10 Chrome 80.0.3987.132.
 
 It seems to also work fine on:
 - Windows 10 with Edge 18362 and with Firefox-ESR 68.6.0esr
 - Raspbian with Firefox-ESR 52.9.0
-- Androïd with Chrome 78.0.3904.108 (on mobile phone, it is recommended to display one chart only)
+- Androïd with Chrome 78.0.3904.108 (on mobile phone, preferably select only one chart in landscape mode)
 
 Recent non-ESR versions of Firefox show some svg rendition problems.
 
 ## CPU and memory requirements
 
-On a Raspberry Pi 3B+ with Chromium: a short burst of approximately 50% cpu consumption is observed when 2 charts corresponding to 6 paths are refreshed on the window (typically every 4 seconds for 10 minute timeWindow charts, or every 10 seconds for 2 hour timeWindow charts); this is only when the window tab is visible and "playing". Augment avgInterval and/or intervalsPerRefresh if you want to reduce the frequency of those bursts.
-Between refreshing bursts, managing the data collection and aggregation for 10 charts, each with approximately 3 paths, takes less than 1% CPU. For the same amount of charts and paths, memory footprint is about between 40K and 60K at all time.
+On a Raspberry Pi 3B+ with signalk-stripcharts executing on a Chromium browser: a short burst of approximately 50% cpu consumption is observed when 2 charts corresponding to 6 paths are refreshed on the window (typically every 4 seconds for 10 minute timeWindow charts, or every 10 seconds for 2 hour timeWindow charts); this is only when the window tab is visible and "playing". Augment avgInterval and/or intervalsPerRefresh if you want to reduce the frequency of those bursts.
+
+Between refreshing bursts, managing the data collection and aggregation for 10 charts, each with approximately 3 paths, takes less than 1% CPU. For the same numbers of charts and paths, memory footprint is between 40K and 60K at all time.
+
+(measurements above are from the browser Task manager)
 
 ## Troubleshooting
 

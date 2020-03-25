@@ -1,6 +1,6 @@
 {
   "name": "signalk-stripcharts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Generate strip charts from Signal K live boat data",
   "main": "stripcharts.js", 
   "repository": "https://github.com/edefalque/signalk-stripcharts",
@@ -12,7 +12,8 @@
     "signalk",
     "signal k",
     "signalk-webapp",
-    "openplotter"
+    "openplotter",
+    "navmonpc"
   ],
   "author": "Etienne Defalque <etienne@defalque.net>",
   "license": "MIT",
