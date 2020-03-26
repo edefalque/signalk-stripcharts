@@ -174,7 +174,7 @@ const Wind_boat_dir_24h = derivedFrom(Wind_boat_dir_2h,
             Wind_boat_dir_24h
         ],
         initialUpperView: Wind_speeds_10min,    // one of the stripCharts
-        initialLowerView: Wind_angles_10min     // idem
+        initialLowerView: Wind_angles_10min     // another one or "none"
 };
 
 // ===================== Color palette ============================

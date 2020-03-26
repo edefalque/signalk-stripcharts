@@ -76,7 +76,7 @@ const  stripChartsSpecs = {
 		Air_24h
 	],
 	initialUpperView: Water_2h,    	// one of the stripCharts
-	initialLowerView: Air_2h     	// idem
+	initialLowerView: Air_2h     	// another one or "none"
 };
 
 // no color palette provided: colors chosen by c3 library

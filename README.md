@@ -13,6 +13,31 @@ The browser window can display two such charts on top of each other. For instanc
 
 Now it's time to install and start using the default charts specifications provided.
 
+**Table of contents:**
+
+  * [Installation](#installation)
+    + [>> Install as a Signal K Webapp:](#---install-as-a-signal-k-webapp-)
+    + [>> Install on a client device:](#---install-on-a-client-device-)
+    + [>> Install on a node server (typically the boat Signal K server):](#---install-on-a-node-server--typically-the-boat-signal-k-server--)
+  * [Basic usage](#basic-usage)
+    + [y- and y2-axis buttons](#y--and-y2-axis-buttons)
+    + [Drop-down list](#drop-down-list)
+    + [Main buttons](#main-buttons)
+  * [How it works](#how-it-works)
+  * [Customization](#customization)
+    + [Chart specifications](#chart-specifications)
+      - [Legends and lines colors](#legends-and-lines-colors)
+    + [Unit conversion](#unit-conversion)
+    + [General options](#general-options)
+  * [Browser compatibility](#browser-compatibility)
+  * [CPU and memory requirements](#cpu-and-memory-requirements)
+  * [Troubleshooting](#troubleshooting)
+  * [Functional improvements](#functional-improvements)
+  * [Technical improvements](#technical-improvements)
+  * [Credits](#credits)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 ## Installation
 
 Signalk-stripcharts comes with all required dependencies (including c3 charting library and d3 visualization library).
@@ -67,9 +92,9 @@ These buttons affect the size and position of the plotted lines corresponding to
 From left to right: 
 - zoom in
 - zoom out
-- raise the plot relative to the axis
-- lower the plot relative to the axis
-- try to center the plot at present time
+- raise the plot lines (y-axis range is shifted)
+- lower the plot lines
+- try to center the plot lines at present time
 - reset to the initial scale and position settings
 
 ### Drop-down list
@@ -89,7 +114,7 @@ They apply to the whole window.
 
 ## How it works
 
-The result is governed by some general options, the chart specifications and the units.
+A chart contents and rendition is governed by some the chart specifications, unit conversion and some general options.
 
 A chart is primarily specified by:
 - a name
@@ -109,7 +134,7 @@ Here is the specification for the chart shown at the top of this document:
 const Wind_speeds_10min = 
     // for javascript variables naming rules see https://javascript.info/variables#variable-naming
     { stripChartName: "Wind_speeds_10min",   // use preferably the same as the containing object name
-        timeWindow: 600,            // 10min
+        timeWindow: 600,            // 10min in seconds
         avgInterval: 2,             // 2 sec
         intervalsPerRefresh: 2,     // default 1
         x: { label: "min/sec ago", tickCount: 11 },   // a tick every min (10, + 1 for zero)
@@ -124,7 +149,7 @@ const Wind_speeds_10min =
 ```
 By default, the chart is refreshed every avgInterval (provided that some new data has come); refreshing can be made slower with the intervalsPerRefresh property in order to spare some processing.
 
-Related chart specifications objects are grouped into a set.
+Related chart specification objects are grouped into a set.
 
 When the application is started as an url, the following "query" parameters must be provided:
 - the address and port of the Signal K server (default to the address & port the page is loaded from)
@@ -154,11 +179,6 @@ Persistency and more powerful charting capabilities can be provided with InfluxD
 
 ## Customization
 Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may then be less accessible. If installed on a Raspberry PI from Signal K Appstore, they will probably be in /home/pi/.signalk/node_modules/signalk-stripcharts/specs/ .
-### Options
-Options governing all charts are given in signalk-stripcharts/js/stripcharts_options.js.
-See comments in the file. Some of those comments explain how time is managed in signalk-stripcharts.
-
-The following options can also be entered as query parameters after the url when launching stripcharts.html: timeTolSec and logTypes. They will then override the values in stripcharts_options.js.
 
 ### Chart specifications
 The specifications files are installed in signalk-stripcharts/specs/. Ample comments are provided for those features that were not explained above.
@@ -169,11 +189,16 @@ New specifications files can be easily derived from those provided at installati
 
 The launch menu has a button that lists all paths and sources currently provided by the selected Signal K server. Switch on all your instruments and systems in order to obtain a full list of what you can chart.
 
-### Legends and lines colors
+You may also use the following Signal K dashboard menus:
+- Server/Plugin Config/Derived_Data_with_Polars in order to configure and start path derivation from existing paths; see https://github.com/SignalK/signalk-derived-data.
+- Data Browser in order to visualize the active and derived paths with their current values
+
+#### Legends and lines colors
 Colors can be specified per legend at the bottom of the chart specifications file in order to insure consistency accross multiple charts of a same set.
 If not provided colors will be assigned automatically by the c3 library.
 See sail.js for how to assign colors.
-### Units
+
+### Unit conversion
 signalk-stripcharts/specs/units provides the list of Signal K units and charting units, with the conversion factors and algorithms.
 It also provides the following default properties for the y and y2 axis as a function of the charting unit:
 - label
@@ -183,6 +208,12 @@ It also provides the following default properties for the y and y2 axis as a fun
 Those can be overridden in the chart specs.
 
 A special unit "Percent" is provided. It allows to plot values of different units on a same "Percent" y or y2 axis by providing reference values in the Signal K unit for 0% and for 100%. See engines.js for an example with comments.
+
+### General options
+Options governing all charts are given in signalk-stripcharts/js/stripcharts_options.js.
+See comments in the file. Some of those comments explain how time is managed in signalk-stripcharts.
+
+The following options can also be entered as query parameters after the url when launching stripcharts.html: timeTolSec and logTypes. They will then override the values in stripcharts_options.js.
 
 ## Browser compatibility
 
@@ -208,13 +239,13 @@ Between refreshing bursts, managing the data collection and aggregation for 10 c
 ## Troubleshooting
 
 Syntax errors in the charts specifications files will be caught by javascript.
-Logical errors in the specs and errors in the data returned by Signal K may also be reported. Inspect the console as needed.
+Logical errors in the specs and errors in the data returned by Signal K may also be reported. Inspect the browser console as needed.
 
 Some tracing options are provided in ./js/stripcharts_options.js. Tracing occurs below the displayed charts.
 
 ## Functional improvements
 - [ ] Filter by sources: in a chart specs, at path level, specify sources wanted as an array
-- [ ] Filter out from the specs the path/sources which are never provided by the signalk server and/or derive missing path values from other paths when possible
+- [ ] Filter out from the specs the path/sources which are never provided by the signalk server
 - [ ] Provide a better way to create/manage custom specs files and preserve them when installing new versions of the package
 
 ## Technical improvements
