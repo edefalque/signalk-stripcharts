@@ -25,7 +25,7 @@ const Engine_Starb_24h =
                 y: { show: false,                // no horizontal grid lines
                   lines: [          // additional labelled and styled horizontal lines
                     {value: 6, text: "OilPress alert (0.3bar)", position: "middle", class: "redLine" },
-                    // 'value: 6' because 6% = 0.3bar/5bar
+                    // 'value: 6' because 6% = 0.3bar/5bar (see pc100 reference in path below)
                     // The available classes (colors) are defined in stripCharts.css:
                     //      redLine, greenLine, blueLine, violetLine, orangeLine, greyLine
                     {value: 70, text: "OilPress at cruising RPM (3.5bar)", position: "middle", class: "greenLine"},
@@ -47,7 +47,14 @@ const Engine_Starb_24h =
         ]
 	}
 ;
+//=================== Engine starboard 2h =======================
 
+const Engine_Starb_2h = derivedFrom(Engine_Starb_24h,
+	{ stripChartName: "Engine_Starb_2h",
+        timeWindow: 2*60*60,     	// 2h
+        avgInterval: 10      		// 10 sec
+        }
+);
 //=================== Engine port 24h =======================
 
 const Engine_Port_24h = derivedFrom(Engine_Starb_24h,
@@ -59,6 +66,14 @@ const Engine_Port_24h = derivedFrom(Engine_Starb_24h,
             { path: "propulsion." + enginePort + ".revolutions", axis: "y2", AVG: "RPM" } 
         ]
 	}
+);
+//=================== Engine port 2h =======================
+
+const Engine_Port_2h = derivedFrom(Engine_Port_24h,
+	{ stripChartName: "Engine_Port_2h",
+        timeWindow: 2*60*60,     	// 2h
+        avgInterval: 10      		// 10 sec
+        }
 );
 //=================== Engine port 24h WITHOUT GRID =======================
 // (exemple of removing a property from a derived chart definition)
@@ -77,11 +92,13 @@ const  stripChartsSpecs = {
 	name: "Engines",    // shows in tab title
 	stripCharts: [
 		Engine_Starb_24h,
+                Engine_Starb_2h,
 		Engine_Port_24h,
+		Engine_Port_2h,
 		Eng_Port_24h_noGrid
 	],
-	initialUpperView: Engine_Starb_24h,
-	initialLowerView: Engine_Port_24h
+	initialUpperView: Engine_Starb_2h,
+	initialLowerView: Engine_Port_2h
 };
 
 // =====================      Color palette     ============================

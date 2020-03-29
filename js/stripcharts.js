@@ -386,7 +386,8 @@ function genPointsFromDeltas(updArray) {
         for (var delta of upd.values) {
             point.skTime = skTimeMsg;
             point.path_ = delta.path.replace(/\./g,"_");  // replace all "." with "_" in path giving path_
-            point.value = delta.value;
+            // Immediately convert Kelvin to Celsius if applicable (see comments in units.js)
+            point.value = (path_skUnit[point.path_] === "Celsius") ? delta.value - 273.15 : delta.value;
             if (wsMsgCount < 20) {log("o","point", point)};
             // point.skUnit will be set in pushPoint()
             for (var x of SC_objects) {

@@ -152,7 +152,6 @@ class stripChart {
     }
      
     this._paths = SCelem.paths;
-    this._pathIsKelvin = [];   // used for Kelvin to Celsius efficient conversion
     this._path_Index = {};
     this._aggrSelectors = [];
     this._rowsLegends = [];
@@ -222,7 +221,6 @@ class stripChart {
     log("b","################################## SC ########################################","");
     log("b","this._SCname", this._SCname);
     log("b","this._path_Index", this._path_Index); 
-    log("b","this._pathIsKelvin", this._pathIsKelvin); 
     for (var x of this._paths) { log("b","this._paths[i]",x); }
     for (var x of this._aggrSelectors) { log("b","this._aggrSelectors[i]",x); }
     log("b","this._rowsLegends", this._rowsLegends);
@@ -284,14 +282,6 @@ class stripChart {
       // add property with pathname (dots replaced by "_") as property name and index as value
       this._path_Index[zPath.path.replace(/\./g,"_")] = this._validPathsNbr;
       
-      // set this._pathIsKelvin[this._validPathsNbr]
-      if (path_skUnit[zPath.path.replace(/\./g,"_")] == "Celsius") {  // see path_skUnit in StripChartsUnits.js
-          this._pathIsKelvin[this._validPathsNbr] = true;
-          }
-      else {
-          this._pathIsKelvin[this._validPathsNbr] = false;
-      }
-
       this._validPathsNbr++;
       if (zPath.axis == "y2") { this._y2PathsCount++; }
 
@@ -490,9 +480,6 @@ class stripChart {
         let pathIx = this._path_Index[point.path_];
         if (pathIx === undefined) {return;}     // this SC is not interested in this path_
         
-        // convert Kelvin to Celsius (this simplifies using unit "Percent" on y/y2 axes for temperatures)
-        if (this._pathIsKelvin[pathIx]) { point.value = point.value - 273.15; }
-
   	    avgMaxMin(this._aggregators[pathIx]);
         log("o","this._aggregators[" + pathIx + "] : " , this._aggregators[pathIx]);
 

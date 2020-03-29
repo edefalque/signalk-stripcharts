@@ -100,7 +100,7 @@ const skUnitsConversion = {
 	Pascal2Bar: 0.00001,
 	Pascal2Millibar: 0.01
 	}
-	
+
 // function returns multiplier for simple "multiplicative" unit conversions or a formula selector (negative integer) for the other conversions
 function getConvMultiplier (path, chartUnit) {
 	

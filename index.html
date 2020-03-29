@@ -38,12 +38,12 @@ button {font-size: 90%;}
     </div>
 <script>
 function launch() {
-    let url = "stripcharts.html?server=" + getChecked("server") + "&specs=" + getChecked("specs");
+    let url = "./stripcharts.html?server=" + getChecked("server") + "&specs=" + getChecked("specs");
     window.open(url);
     // or location.replace(url);  
 }
 function paths() {
-    let url = "enumActivePaths.html?server=" + getChecked("server");
+    let url = "./enumActivePaths.html?server=" + getChecked("server");
     window.open(url);
 }
 function getChecked(radioName) {
