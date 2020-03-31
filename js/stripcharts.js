@@ -260,6 +260,7 @@ specs.onload = function() {        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     selectLower.disabled = false;
 
+    document.getElementById("main").removeAttribute("hidden");
 
     upperChartObj.genChart("upperView");     // generate upperView  <<<<<<<<<<<<<<<
     lowerChartObj.genChart("lowerView");     // generate lowerView  <<<<<<<<<<<<<<<

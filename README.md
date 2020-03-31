@@ -16,7 +16,7 @@ Now it's time to install and start using the default charts specifications provi
 **Table of contents:**
 
   * [**Installation**](#--installation--)
-    + [**Install as a Signal K Webapp**](#--install-as-a-signal-k-webapp--)
+    + [**Install as Webapp from Signal K Dashboard**](#--install-as-webapp-from-signal-k-dashboard--)
     + [**Install on a client device**](#--install-on-a-client-device--)
     + [**Install on a node server - typically the boat Signal K server**](#--install-on-a-node-server---typically-the-boat-signal-k-server--)
   * [**Basic usage**](#--basic-usage--)
@@ -46,7 +46,7 @@ Signalk-stripcharts comes with all required dependencies (including c3 charting 
 
 Choose one of the following 3 methods as applicable or desired:
 
-### **Install as a Signal K Webapp**
+### **Install as Webapp from Signal K Dashboard**
 
 If Signal K node server (https://github.com/SignalK/signalk-server-node) is installed on your server:
 - login to the Signal K dashboard
@@ -73,7 +73,7 @@ Start the launch menu:
 - **If installed as a Signal K Webapps**: from your client or on the Signal K server, access the Signal K dashboard, then start Signalk-Stripcharts from the dashboard `Webapps` menu.
 
 You may also:
-- **If installed on a (Signal K) node server**: from your client browser enter url  *`mynodeserver:port`*`/signalk-stripcharts`
+- **If installed on a (Signal K) node server**: from your client browser enter url  *`mynodeipaddr:port`*`/signalk-stripcharts`
 - **If installed on a client**: double click on *`...path...`*`/signalk-stripcharts/index.html`
 
 On the launch menu you can choose the Signal K server (same or distinct from the node server where signalk-stripcharts is installed) and choose a set of charts, then push the `Launch Signalk-stripcharts` button. If you are connected to the Internet try first with the default selections of the launch menu.
