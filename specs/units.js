@@ -25,7 +25,7 @@ const chartUnits = {
 	Fathom: { label: "fathoms", min: 0, max: 30, tick: {format: d3.format(".0f") } },
 	Foot: { label: "feet", min: 0, max: 150, tick: {format: d3.format(".0f") } },
 	Revolutions_per_minute: { label: "RPM", min: 0, max: 3000, tick: {format: d3.format(".0f") } },
-	Bar: { label: "bar", min: 0, max: 6, tick: {format: d3.format(".1f") } },	// ".1f"	// for engine oil pressure etc
+	Bar: { label: "bar", min: 0, max: 6, tick: {format: d3.format(".1f") } },				// for engine oil pressure etc
 	Millibar: { label: "mbar", min: 950, max: 1070, tick: {format: d3.format(".0f") } },	// for the atmospheric pressure
 	Pounds_per_square_inch: { label: "psi", min: 0, max: 100, tick: {format: d3.format(".0f") } },
 	Celsius: { label: "°C", min: 0, max: 110, tick: {format: d3.format(".0f") } },
@@ -103,11 +103,12 @@ const skUnitsConversion = {
 
 // function returns multiplier for simple "multiplicative" unit conversions or a formula selector (negative integer) for the other conversions
 function getConvMultiplier (path, chartUnit) {
-	
-	let path_ = path.replace(/\./g,"_");
+	let pathIdxVal = path.indexOf("[");
+	if (pathIdxVal != -1) { path = path.slice(0,pathIdxVal); }  //strip "[$sourceDev]"
+	let path_ = path.replace(/\./g,"_");  
 	if ( chartUnit == path_skUnit[path_] ) { return 1; }	// in particular no conversion Celsius 2 Celsius
 	let multiplier = 0;
-	if (typeof 	path_skUnit[path_] !== "string") {alert("undefined unit for: " + path_);}
+	if (typeof 	path_skUnit[path_] !== "string") {alert("unit.js: undefined unit for: " + path_);}
 	let convKey = path_skUnit[path_] + "2" + chartUnit;
 	if (typeof skUnitsConversion[convKey] == "number")
 		{ multiplier = skUnitsConversion[convKey]; }

@@ -31,34 +31,41 @@ Buffers accumulating data point values:
 
 Control blocks:
 ===============
+Note:
+-In specs: { path: "navigation.speedThroughWater[source1]", ...
+- becomes: { path: "navigation.speedThroughWater", $source="source1", ... (see collectValidPaths() function)
 
 3. this._paths = [
-      { path: "navigation.speedThroughWater", skip: false,   axis: "y", AVG: "STW", MAX: "", MIN: "" },
+      { path: "navigation.speedThroughWater", $source="source1", skip: false,   axis: "y", AVG: "STW1", MAX: "", MIN: "" },
+      { path: "navigation.speedThroughWater", $source="source2", skip: false,   axis: "y", AVG: "STW2", MAX: "", MIN: "" },
       { path: "environment.wind.speedApparent", skip: false, axis: "y", AVG: "", MAX: "maxAWS", MIN: "minAWS" },
         ...
       { path: "environment.depth.belowTransducer", skip: false, axis: "y2", AVG: "", MAX: "", MIN: "minDEPTH" }
     ]
 
-3. Object this._path_Index, mapping each path to an index:
+3. Object this._path_Index, mapping each path line to an index for this._paths:
      
-      {"navigation_speedOverGround":0,     // note: dots replaced by "_" in path names
-        "environment_wind_speedApparent":1,
+      {"navigation_speedThroughWater$source1":0,     // note: dots and hyphens replaced by "_" in path names & sources
+       "navigation_speedThroughWater$source2":1,
+       "environment_wind_speedApparent":2,
       ...}
 
 4. Array this._aggrSelectors, containing what is to be charted for each path_, e.g.:
 
       this._aggrSelectors[0]: {"AVG":true,"MAX":false,"MIN":false}    // path 0
-      this._aggrSelectors[1]: {"AVG":false,"MAX":true,"MIN":true}     // path 1
+      this._aggrSelectors[1]: {"AVG":true,"MAX":false,"MIN":false}    // path 1
+      this._aggrSelectors[2]: {"AVG":false,"MAX":true,"MIN":true}     // path 2
       ...
         
 5. this._rowsLegends: a single "row" of data labels to be passed to the charting library as first element of the data array:
 
-      ["SOG","maxSOG","maxAWS","minAWS", ... ,"minDepth"]
+      ["STW1","STW2","maxAWS","minAWS", ... ,"minDepth"]
 
 
 6. this._pathTips: aggregation function and path tips corresponding to the legends
-      [ "AVG navigation_speedOverGround",
-        "MAX navigation_speedOverGround",
+      [ "AVG navigation_speedThroughWater[source1]",
+        "AVG navigation_speedThroughWater[source2]",
+        "MAX environment_wind_speedApparent",
          ..., "MIN environment_depth_belowTransducer"
       ]
 
@@ -152,6 +159,7 @@ class stripChart {
     }
      
     this._paths = SCelem.paths;
+    this._has$source = false;  // will be set to true if any path specified with $source
     this._path_Index = {};
     this._aggrSelectors = [];
     this._rowsLegends = [];
@@ -162,7 +170,7 @@ class stripChart {
     this._y2Classes = [];    //  "c3-lines-XXX"  will be pushed for all y2 data
     this._convTuples = [];
     
-    this._paths.forEach(collectValidPaths, this);    //  <<<<<<<<<<<<<<<<<<<<<<<<<      collectValidPaths  <<<<<
+    this._paths.forEach(collectValidPaths, this);
 	
 	if (typeof colorPalette != "undefined") {	// if the colorPalette object exists
 		// set colors for collected legends, resulting in (e.g.)
@@ -222,8 +230,10 @@ class stripChart {
     log("b","this._SCname", this._SCname);
     log("b","this._path_Index", this._path_Index); 
     for (var x of this._paths) { log("b","this._paths[i]",x); }
+    log("b","this._has$source", this._has$source); 
     for (var x of this._aggrSelectors) { log("b","this._aggrSelectors[i]",x); }
     log("b","this._rowsLegends", this._rowsLegends);
+    log("b","this._pathTips", this._pathTips);
     log("b","this._axes", this._axes);
     log("b","this._y2Classes", this._y2Classes);  
     log("b","subscribePaths", subscribePaths);
@@ -232,55 +242,36 @@ class stripChart {
     log("b","this._colorPalette", this._colorPalette);
     log("b","################################## END SC ########################################","");
 
-    function formatxTick(z, avgInterv) {  
-      // depending on axis scale, time will be shown as (e.g.) 2d5h or 5h26m or 9m12s (also in tooltips)
-      let msec = z * avgInterv; 
-      let d = Math.floor(msec / 86400000);
-      let rh = msec - d * 86400000;
-      let h = Math.floor(rh / 3600000);
-      let rm = rh - h * 3600000;
-      let m = Math.floor(rm / 60000);
-      let rs = rm - m * 60000;
-      let s = Math.floor(rs / 1000);
-      let rmsec = rs - s * 1000;
-      // rounding up for last time unit displayed in string; eg "1d2h35m" will be displayed "1d3h"
-      h = (d > 0 && m >= 30)? h++ : h;
-      m = (h > 0 && s >= 30)? m++ : m;
-      s = (rmsec >= 500)? s++ : s;  // rounding also seconds based on msec  
-// initial version 
-      return (  ""  + ((d > 0)? d + "d": "" )
-        + ( (h > 0)? h + "h": "" )
-        + ( (m > 0 && d < 1)? m + "m": "" )
-        + ( (s > 0 && d < 1 && h < 1)? s + "s": "" )  // some overlap occurs in ticks labels when starting a chart
-        );
-// "culling" version when rows not fully filled at initialization
-/*      let sec = msec / 1000;
-      return (  ""  + ((d > 0)? d + "d": "" )
-        + ( (h > 0)? h + "h": "" )
-        + ( (d == 0 && m > 0)? m + "m": "" )
-        + ( (sec > 0 && sec < 10)? s + "s": "" )     // note: tooltips title also affected
-        + ( (sec >= 10  && sec < 40)? s + "" : "" ) // similar "culling" for "h", "m" desirable for large scale charts?
-        + ( (sec >= 40 && sec < 3600 && s > 0)? s + "s": "" )			
-        );
-*/
-    }
-
-    function collectValidPaths(zPath, iPth, pathsArray) {        //    <<<<<<<<<<<<<<  function collectValidPaths   <<<<<<<<<<<<<<<<
-    //  Collect valid paths in subscribePaths global array, ignoring dupplicates.
+    function collectValidPaths(zPath, iPth, pathsArray) { 
+    //  Collect valid paths (stripped from source suffix) in subscribePaths global array, ignoring dupplicates.
     //  Also, prepares the stripChartsClass instance control blocks
 
-      if (!zPath.axis || zPath.axis != "y2") {zPath.axis = "y";}    // "y" is default
-      
+      // separate source from path, if any
+      if (zPath.path.indexOf("[")>0 && zPath.path.indexOf("]") > zPath.path.indexOf("[")) {
+          zPath.$source = zPath.path.slice(zPath.path.indexOf("[")+1, zPath.path.indexOf("]"));
+          zPath.path = zPath.path.slice(0,zPath.path.indexOf("["));
+          this._has$source = "true";
+      }
+      else { zPath.$source = ""; }
+
+      if (!zPath.axis || zPath.axis != "y2") {zPath.axis = "y";}    // "y" is default    
       
       if ( !zPath.path || (!zPath.AVG && !zPath.MAX && !zPath.MIN) || zPath.skip) {
         delete pathsArray[iPth];    // replace subscription element by null, will be removed later
         return;    
       }
+      
       if (!subscribePaths.includes(zPath.path)) {    // global: do not subscribe twice to a path
         subscribePaths.push(zPath.path);
       }  
-      // add property with pathname (dots replaced by "_") as property name and index as value
-      this._path_Index[zPath.path.replace(/\./g,"_")] = this._validPathsNbr;
+
+      // add property with pathname$source (dots replaced by "_") as property name and index as value
+      if (zPath.$source == "") {
+          this._path_Index[(zPath.path).replace(/\./g,"_")] = this._validPathsNbr;
+      }
+      else {
+          this._path_Index[(zPath.path + "$" + zPath.$source.replace(/-/g,"_")).replace(/\./g,"_")] = this._validPathsNbr;
+      }
       
       this._validPathsNbr++;
       if (zPath.axis == "y2") { this._y2PathsCount++; }
@@ -322,7 +313,12 @@ class stripChart {
   function fillCtlBlocks(this1, zPath, tuple, x, fn) {
     this1._rowsLegends.push(x);
     if (pathTipOn) {
-      this1._pathTips.push(fn + " " + zPath.path);
+      if (this1._has$source) {
+        this1._pathTips.push(fn + " " + zPath.path + "[" +zPath.$source + "]");
+      }
+      else {
+        this1._pathTips.push(fn + " " + zPath.path);
+      }
     }
     this1._axes[x] = zPath.axis;
     if (zPath.axis == "y2") { this1._y2Classes.push("c3-lines-" + x); }
@@ -457,7 +453,7 @@ class stripChart {
 
   
   pushPoint(point) {
-        // point = {path_:"a_Path", skTime:msec, value:aNumber}
+        // point = {path_:"a_Path", $source_:"a_source", skTime:msec, value:aNumber}
         
         if (this._SCname == "none") { return; }
 
@@ -471,17 +467,24 @@ class stripChart {
         if ((point.skTime - this._lastRowTime) > this._avgInterval) {   // time to generate newRow
             let newRow = buildNewRow(this._aggregators, this._aggrSelectors, this._convTuples, this._lastRowTime);
             this._lastRowTime = this._lastRowTime + this._avgInterval;
-            log("o","newRow", newRow);
             this._rowCount++;
+            log("o","=====newRow " + this._rowCount + " @ " + formatxTick(this._rowCount, this._avgInterval), newRow);
             this._rowCountSinceRefresh++;
             if (this._rows.unshift(newRow) > this._rowsMaxLength) {this._rows.pop();} // unshift, and pop as needed
             for (var z of this._aggregators) { z.COUNT = 0 }
         }
-        let pathIx = this._path_Index[point.path_];
+
+        let pathIx;
+        if (this._has$source) {
+            pathIx = this._path_Index[point.path_+ "$" + point.$source_];  // first serve path with specified $source
+            if (pathIx === undefined) { pathIx = this._path_Index[point.path_]; } // then path without $source
+        }
+        else { pathIx = this._path_Index[point.path_]; }
+
         if (pathIx === undefined) {return;}     // this SC is not interested in this path_
         
   	    avgMaxMin(this._aggregators[pathIx]);
-        log("o","this._aggregators[" + pathIx + "] : " , this._aggregators[pathIx]);
+        log("o","this._aggregators[" + pathIx + "]" , this._aggregators[pathIx]);
 
     function avgMaxMin(obj) {
       // compute obj.AVG, obj.MAX, obj.MIN
@@ -509,7 +512,7 @@ class stripChart {
           let pushCount = 0;
           aggregators.forEach(function(z, iz) {
             log("o","aggregators[" + iz + "]", z);
-            hotDeck(z);   // hotDeck as needed  (replace missing point aggregates with previous AVG, MAX, MIN)
+            hotdeck(z);   // hotdeck as needed  (replace missing point aggregates with previous AVG, MAX, MIN)
     //      Now, build newRow as (e.g.):
     //      [z[0].AVG, z[1].MIN, z[1].MAX, z[2].AVG, z[3].MAX, z[3].MIN]
     //      AVG/MAX/MIN inserted or ignored depending on chosen options stored in aggrSelectors[]
@@ -519,11 +522,12 @@ class stripChart {
           });
         return row;
         
-        function hotDeck(obj) {
-        // hotDeck: if no delta received: use recent data (lastxxx); if no recent data force 0
+        function hotdeck(obj) {
+        // hotdeck: if no delta received: use recent data (lastxxx); if no recent data force 0
         // obj example:  SOG = {AVG:0, MAX:0, COUNT:0, lastAVG:0, lastMAX:0, lastStamp: 0};
-          if (obj.lastStamp == 0 || obj.lastStamp >= lastRowTime) {return;}    // no hotDeck
-          if ((lastRowTime - obj.lastStamp) < 20000) {    // lastDelta not too old: hotDeck
+          if (obj.lastStamp == 0 || obj.lastStamp >= lastRowTime) {return;}    // no hotdeck
+          if ((lastRowTime - obj.lastStamp) < hotdeckSec*1000) {    // lastDelta not too old: hotdeck
+            log("o", "hotdecked, AVG", obj.lastAVG );
             obj.AVG = obj.lastAVG;
             obj.MAX = obj.lastMAX;
             obj.MIN = obj.lastMIN;
@@ -695,6 +699,39 @@ class stripChart {
     this._chart.axis.labels({x: label});
   }
 
+}   // end stripcharts-class constructor
+
+function formatxTick(z, avgInterv) {  
+  // depending on axis scale, time will be shown as (e.g.) 2d5h or 5h26m or 9m12s (also in tooltips)
+  let msec = z * avgInterv; 
+  let d = Math.floor(msec / 86400000);
+  let rh = msec - d * 86400000;
+  let h = Math.floor(rh / 3600000);
+  let rm = rh - h * 3600000;
+  let m = Math.floor(rm / 60000);
+  let rs = rm - m * 60000;
+  let s = Math.floor(rs / 1000);
+  let rmsec = rs - s * 1000;
+  // rounding up for last time unit displayed in string; eg "1d2h35m" will be displayed "1d3h"
+  h = (d > 0 && m >= 30)? h++ : h;
+  m = (h > 0 && s >= 30)? m++ : m;
+  s = (rmsec >= 500)? s++ : s;  // rounding also seconds based on msec  
+// initial version 
+  return (  ""  + ((d > 0)? d + "d": "" )
+    + ( (h > 0)? h + "h": "" )
+    + ( (m > 0 && d < 1)? m + "m": "" )
+    + ( (s > 0 && d < 1 && h < 1)? s + "s": "" )  // some overlap occurs in ticks labels when starting a chart
+    );
+// "culling" version when rows not fully filled at initialization
+/*      let sec = msec / 1000;
+  return (  ""  + ((d > 0)? d + "d": "" )
+    + ( (h > 0)? h + "h": "" )
+    + ( (d == 0 && m > 0)? m + "m": "" )
+    + ( (sec > 0 && sec < 10)? s + "s": "" )     // note: tooltips title also affected
+    + ( (sec >= 10  && sec < 40)? s + "" : "" ) // similar "culling" for "h", "m" desirable for large scale charts?
+    + ( (sec >= 40 && sec < 3600 && s > 0)? s + "s": "" )			
+    );
+*/
 }
 
 

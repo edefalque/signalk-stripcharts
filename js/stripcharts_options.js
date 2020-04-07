@@ -6,7 +6,7 @@ var tablesMaxRows = 2000;   // recommandation: keep timeWindow/avgInterval < 100
 var maxRunMinutes = 20;
 
 // Time reference:
-// initial date/time reference is signalk version msg timestamp;
+// initial date/time reference is signalk Hello (version) msg timestamp;
 // thereafter the client clock is used as timer for computing the elapsed time
 // and controling the aggregation process;
 // date/time when displayed are computed as initial sk ref + elapsed time.
@@ -16,12 +16,12 @@ var maxRunMinutes = 20;
 // use timeTolSec = 0 when replaying log files or when instruments provide "bad" (outdated or inconsistent) stamps;
 var timeTolSec = 0;    // typically 20 sec; 0 --> check is bypassed
 
-// display a tip with aggregation function and path when hovering over a legend item
+// display a tip with aggregation function and path[source] when hovering over a legend item
 // e.g.: "MIN environment.wind.speedApparent" when hovering over 'minAWS'
 var pathTipOn = true;
 
 // logging for debuging (in window area, below charts):
-var logMax = 500;   // logging and some error msgs ignored after logMax invocations
+var logMax = 1000;   // logging and some error msgs ignored after logMax invocations
 
 // logTypes control what is logged; is also an optional url parameter
 var logTypes = "";  // "all" or some in "sbweo";  // specifies types of info to be logged; no logging if ""
@@ -31,12 +31,15 @@ var logTypes = "";  // "all" or some in "sbweo";  // specifies types of info to 
 // e for events (mostly buttons related and errors),
 // o for others
 
+// hotdeck duration in seconds (when some data stops arriving)
+var hotdeckSec = 60;
+
 // signalk subscription policy:
 var subscribePolicy = {
       // ref: http://signalk.org/specification/1.3.0/doc/subscription_protocol.html
-      // only the following policy has been tested:
-      period: 1000,       // 1000 is signalk default
+      // see also: https://github.com/SignalK/signalk-server-node/issues/1015
+      period: 950,        // 1000 is signalk default
       format: "delta",    // "delta" is signalk default
       policy: "instant",  // "ideal" is signalk default
-      minPeriod: 500,     // only relevant for policy='instant' (and 'ideal' ?)
+      minPeriod: 100      // IMPORTANT: make sure minPeriod < avgInterval / 5   
     };

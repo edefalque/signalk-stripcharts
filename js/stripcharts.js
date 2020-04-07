@@ -28,10 +28,13 @@ document.body.append(specs);  // specs declaration appended to body
 ** get logTypes string from URL server parameter if any,
 ** replace "all" by "sbweo"
 **/
+
 if (urlParams.has("logTypes")) {
     logTypes = urlParams.get("logTypes");
 }
-if (logTypes == "all") { logTypes = "sbweo"; }
+if (logTypes == "all") {
+    logTypes = "sbweo";
+}
 
 /*******************************************************************
 ** get timeTolSec from URL server parameter if any
@@ -39,7 +42,73 @@ if (logTypes == "all") { logTypes = "sbweo"; }
 if (urlParams.has("timeTolSec")) {
     timeTolSec = urlParams.get("timeTolSec");
 }
-if (typeof timeTolSec != "number") { timeTolSec = 0; }
+timeTolSec = parseInt(timeTolSec);
+if (!Number.isSafeInteger(subscribePolicy.minPeriod)) {
+    timeTolSec = 0;
+    alert("timeTolSec is not a number, \n replaced by '" + timeTolSec + "'");
+}
+
+/*******************************************************************
+** get hotdeckSec from URL server parameter if any
+**/
+if (urlParams.has("hotdeckSec")) {
+    hotdeckSec = urlParams.get("hotdeckSec");
+}
+hotdeckSec = parseInt(hotdeckSec);
+if (!Number.isSafeInteger(hotdeckSec)) {
+    hotdeckSec = 60;
+    alert("hotdeckSec is not a number, \n replaced by " + hotdeckSec);
+}
+
+/*******************************************************************
+** get period from URL server parameter if any
+**/
+if (urlParams.has("period")) {
+    subscribePolicy.period = urlParams.get("period");
+}
+subscribePolicy.period = parseInt(subscribePolicy.period);
+if (!Number.isSafeInteger(subscribePolicy.period)) {
+    subscribePolicy.period = 950;
+    alert("subscribePolicy.period is not a number, \n replaced by " + subscribePolicy.period);
+    
+}
+
+/*******************************************************************
+** get format from URL server parameter if any
+**/
+if (urlParams.has("format")) {
+    subscribePolicy.format = urlParams.get("format");
+}
+if (!["delta", "full"].includes(subscribePolicy.format)) {
+    subscribePolicy.format = "delta";
+    alert("invalid subscribePolicy.format, \n replaced by '" + subscribePolicy.format + "'");
+    
+}
+
+/*******************************************************************
+** get policy from URL server parameter if any
+**/
+if (urlParams.has("policy")) {
+    subscribePolicy.policy = urlParams.get("policy");
+}
+if (!["instant", "ideal", "fixed"].includes(subscribePolicy.policy)) {
+    subscribePolicy.policy = "instant";
+    alert("invalid subscribePolicy.policy, \n replaced by '" + subscribePolicy.policy +"'");
+    
+}
+
+/*******************************************************************
+** get minPeriod from URL server parameter if any
+**/
+if (urlParams.has("minPeriod")) {
+    subscribePolicy.minPeriod = urlParams.get("minPeriod");
+}
+subscribePolicy.minPeriod = parseInt(subscribePolicy.minPeriod);
+if (!Number.isSafeInteger(subscribePolicy.minPeriod)) {
+    subscribePolicy.minPeriod = 100;
+    alert("subscribePolicy.minPeriod is not a number \n replaced by " + subscribePolicy.minPeriod);
+    
+}
 
 /*******************************************************************
 ** get server address from URL server parameter if any,
@@ -330,18 +399,22 @@ var wsMsg = {};
 var wsMsgCount = 0;
 var timeOffset = 0;
 var skTimeStarted = 0;
+var cliTimeOnHello = 0;
+var elapsedSec = 0;
 var skTimeMsg = 0;  // NOTE: skTime* means time by reference to time received in version msg
 var countersSkipped = {};   //  will hold counters of skipped source element with invalid timeStamps
 
 ws.onmessage = function(event) {
         wsMsgCount++;
-        let cliTimeMsg = new Date().getTime();
+        let cliTimeOnMsg = new Date().getTime();
+        if (cliTimeOnHello == 0) { cliTimeOnHello = cliTimeOnMsg; }
+        elapsedSec = (cliTimeOnMsg - cliTimeOnHello) / 1000;
         wsMsg = JSON.parse(event.data);
         if (typeof wsMsg.timestamp == "string") {
-            console.log("Version msg: " + JSON.stringify(wsMsg));
-            log("w","wsMsg", wsMsg);
+            console.log("Hello msg @ "  + elapsedSec + " elapsedSec: " + JSON.stringify(wsMsg));
+            log("w","#####wsMsg @ " + elapsedSec + " elapsedSec <br> ", wsMsg);
             skTimeStarted = Date.parse(wsMsg.timestamp);  // constant
-            timeOffset = cliTimeMsg - skTimeStarted;  // constant
+            timeOffset = cliTimeOnMsg - skTimeStarted;  // constant
             return;
         }
         else if (!wsMsg.context) {
@@ -350,12 +423,13 @@ ws.onmessage = function(event) {
         }
         if (skTimeStarted == 0) {    // should not happen !!
             alert("No time received from SK, using client time");
-            skTimeStarted = cliTimeMsg;
-            timeOffset = cliTimeMsg - skTimeStarted;  // constant, near 0
+            skTimeStarted = cliTimeOnMsg;
+            timeOffset = cliTimeOnMsg - skTimeStarted;  // constant, near 0
         }
-        skTimeMsg = cliTimeMsg - timeOffset;
-        if (wsMsgCount < 20) {log("w","wsMsg", wsMsg)};
-
+        skTimeMsg = cliTimeOnMsg - timeOffset;
+        // if (wsMsgCount < 100) {
+            log("w","#####wsMsg @ " + elapsedSec + " elapsedSec <br> ", wsMsg);
+        // }
         // stop test on demo server:
         if (((skTimeMsg - skTimeStarted) > (maxRunMinutes * 60000)) && server == "demo.signalk.org") {   
             console.log("Close socket on maxRunMinutes = " + maxRunMinutes);
@@ -376,13 +450,16 @@ function populateSubscription(x, ix) {
 
 function genPointsFromDeltas(updArray) {
     // extract boat data from msg; for each path, pushPoint to all stripCharts object instances (each will ignore unused paths)
-    let point = {path_:"", skTime:0, value:0};
+    let point = {path_:"", $source_:"", skTime:0, value:0};
     for (var upd of updArray) { 
         let timeDiff = Math.abs(skTimeMsg - Date.parse(upd.timestamp));
         if (timeTolSec != 0 && timeDiff > timeTolSec*1000) {  // time tolerance check
             logSkipped(upd.source, upd.timestamp);  
             return;      // skip out-of-tolerance timestamp
         }
+
+        // extract device from $source
+        point.$source_ = upd.$source.replace(/[\.-]/g,"_");
         // get path and value from wsMSG.updates
         for (var delta of upd.values) {
             point.skTime = skTimeMsg;
@@ -431,7 +508,7 @@ function log(type,intro, arg) {
         if (typeof arg === "object") { str = JSON.stringify(arg); }
             else { str = arg }
         }
-        logAreaDiv.innerHTML += "<br>" + intro + ">>> " + str;
+        logAreaDiv.innerHTML += "<br>" + intro + ": " + str;
 
     }
 

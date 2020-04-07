@@ -70,7 +70,7 @@ This will install Signalk-stripcharts under the closest node_modules folder high
 ## **Basic usage**
 
 Start the launch menu:
-- **If installed as a Signal K Webapps**: from your client or on the Signal K server, access the Signal K dashboard, then start Signalk-Stripcharts from the dashboard `Webapps` menu.
+- **If installed as a Signal K Webapps**: from your client or on the Signal K server, access the Signal K dashboard (e.g. *`mysignalkserveripaddr`*`:3000/signak` or `localhost:3000/admin`), then start Signalk-Stripcharts from the dashboard `Webapps` menu.
 
 You may also:
 - **If installed on a (Signal K) node server**: from your client browser enter url  *`mynodeipaddr:port`*`/signalk-stripcharts`
@@ -116,20 +116,20 @@ They apply to the whole window.
 
 ## **How it works**
 
-A chart contents and rendition is governed by the chart specifications, unit conversion and some general options.
+A chart contents and rendition is governed by the **chart specifications**, **unit conversion** and some **general options**.
 
 In Signal K, data types are identified as paths: e.g. the true wind speed is identified by the path `environment.wind.speedTrue`.
 
 A chart is primarily specified by:
 - a name
 - the length of the time axis (`timeWindow`); typically 10 minutes, 2 hours or 24 hours
-- the averaging period (explained below)
+- the averaging period (`avgInterval` explained below)
 - the y axis range and unit (unit conversion is taken care of)
 - the same properties for the optional y2 axis
 - the list of Signal K paths to be charted and corresponding abbreviated legends
 
 For each path the charted value can be the average (`AVG`), the maximum (`MAX`) and/or the minimum (`MIN`) of the values received from Signal K during the averaging period. The averaging period (`avgInterval`) should be set such that the ratio `timeWindow`/`avgInterval` is between 300 and 1000 (i.e. a reasonable number of plots along the `timeWindow`); `avgInterval` must be longer than the sampling period defined in the Signal K subscription period (`subscribePolicy.period` option), which is typically 1 second. By default, the chart is refreshed every `avgInterval` (provided that some new data has come for that chart).
-When data stops coming for a particular path, it is "hotdecked" from the last data received until new data arrives; hotdecking stops after twenty seconds and thereafter the corresponding data will be 0 (in Signal K unit) indicating probably that the corresponding instrument was disconnected or switched off.
+When data stops coming for a particular path, it is "hotdecked" from the last data received until new data arrives; hotdecking stops after `hotdeckSec` seconds (default 60 in options) and thereafter the corresponding data will be 0 (in Signal K unit) indicating probably that the corresponding instrument was disconnected or switched off.
 
 A chart specification is provided as a Javascript object.
 Here is the specification for the chart shown at the top of this document:
@@ -151,20 +151,29 @@ const Wind_speeds_10min =
     }
 ;
 ```
+
 By default, the chart is refreshed every `avgInterval` (provided that some new data has come); however refreshing can be made slower with the `intervalsPerRefresh` property in order to spare some processing.
 
 Related chart specification objects are grouped into a set.
 
 When the application is started as an url, the following "query" parameters must be provided:
-- `server` with the address and port of the Signal K server (default to the address & port the page is loaded from)
+- `server` with the address and port of the Signal K server (defaults to the address & port the page is loaded from)
 - `specs` with the file name containing the chart specifications set (without .js extension).
 
-The application subscribes to the Signal K server deltas for all the paths in the set. The values are then continuously collected and aggregated for all charts in a set.
+The application subscribes to the Signal K server deltas for all the paths in the set. The values are then continuously collected and aggregated for all charts in a set (using the Streaming WebSocket API).
+
+Different sources may provide data for the same path; as needed, the `path` property may be extended to filter a specific source, e.g. `navigation.speedOverGround[gps.1]`. Sources corresponding to a path on your Signal K server can be obtained from the launch menu provided that the corresponding instrument is on and connected. A certain path may be listed several times in the chart specs, e.g.:
+```javascript
+{ path: "navigation.speedOverGround[gps.1]", AVG: "SOG1" },
+{ path: "navigation.speedOverGround[gps.2]", AVG: "SOG2" },
+{ path: "navigation.speedOverGround", AVG: "SOGx" },
+```
+The first two lines will collect data each respectively from `gps.1` and `gps.2`. The third line will collect SOG data from any other sources. If a line collect data from different poorly calibrated sources, the line plotted might be "jumpy" (note: the average computation will be influenced by the frequency at which the data is provided by the two sources).
 
 At any one time, two charts can be displayed as selected by the user from drop down lists.
 If the user selects `none` in one of the drop down lists, the remaining chart covers the whole window area.
 
-Charts can be paused. When paused, data collection continues. So the charts display will catch up when "unpaused". When the chart window is minimized or not in view, the charts are paused likewise and will catch up when brought to view. This minimizes processing load.
+Charts can be paused. When paused, data collection continues "behind the scene". And the charts display will catch up when "unpaused". When the chart window is minimized or not in view, the charts are paused likewise and will catch up when brought to view. This minimizes processing load.
 
 There is no persistency: when the window is closed it is disconnected from Signal K and the buffers are "lost". In order to reconnect reload the page.
 
@@ -176,13 +185,15 @@ The following specifications files are provided at installation:
 
 Each of them can be started in its own browser tab and run concurrently.
 
+Additionally, `sources_filtering_example.js` is provided (read comments in the file before running).
+
 In a specification file, a chart specification can be derived from another chart and only the properties that differ need to be specified (e.g. a two-hours chart can be derived from a ten-minutes chart, with most of the properties inherited). Inheritance is provided at the first level of properties only.
 
 Signalk-stripcharts buffers having no persistency, they cannot be used to store the history.
 Persistency and more powerful charting capabilities can be provided with InfluxDB and Grafana as explained here (https://github.com/tkurki/signalk-to-influxdb/blob/master/README.md) or could be provided with the help of the history capability of Signal K if available.
 
 ## **Customization**
-Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may then be less easily accessible. If installed on a Raspberry PI from Signal K Appstore, they will probably be in `/home/pi/.signalk/node_modules/signalk-stripcharts/specs/`.
+Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may then be less easily accessible. If installed on a Raspberry PI from Signal K Appstore, they will probably be in `$HOME/.signalk/node_modules/signalk-stripcharts/specs/`.
 
 ### **Chart specifications**
 The specifications files are installed in `signalk-stripcharts/specs/`. Ample comments are provided for those features that were not explained above.
@@ -204,7 +215,7 @@ If not provided colors will be assigned automatically by the c3 library.
 See `sail.js` for how to assign colors.
 
 ### **Unit conversion**
-`signalk-stripcharts/specs/units` provides the list of Signal K units and charting units, with the conversion factors and algorithms.
+`signalk-stripcharts/specs/units` provides the list of Signal K units and charting units (not yet a complete set), with the conversion factors and algorithms.
 It also provides the following default properties for the y and y2 axis as a function of the charting unit:
 - `label`
 - range (`min` and `max`)
@@ -215,10 +226,15 @@ Those can be overridden in the chart specs.
 A special unit `Percent` is provided. It allows to plot values of different units on a same "Percent" y or y2 axis by providing reference values in the Signal K unit for 0% and for 100%. See `engines.js` for an example with comments.
 
 ### **General options**
-Options governing all charts are given in `signalk-stripcharts/js/options.js`.
+Options governing all charts are given in `signalk-stripcharts/js/stripcharts_options.js`.
 See comments in the file. Some of those comments explain how time is managed in signalk-stripcharts.
 
-The following options can also be entered as query parameters after the url when launching stripcharts.html: `timeTolSec` and `logTypes`. They will then override the corresponding values in `options.js`.
+Any of the following options can also be entered as query parameters after the url when launching stripcharts.html:
+`timeTolSec`, `logTypes`, `hotdeckSec`,
+`period`, `format`, `policy` and `minPeriod`.
+They will then override the corresponding values in `stripcharts_options.js`.
+
+Invalid option values will be replaced by defaults.
 
 ## **Browser compatibility**
 
@@ -233,7 +249,7 @@ It seems to also work fine on:
 
 Recent non-ESR versions of Firefox show some svg rendition problems.
 
-## **CPU and memory requirements**
+## **CPU and memory requirements on the client side**
 
 On a Raspberry Pi 3B+ with signalk-stripcharts executing on a Chromium browser: a short burst of approximately 50% cpu consumption is observed when 2 charts corresponding to 6 paths are refreshed on the window (typically every 4 seconds for 10 minute timeWindow charts, or every 10 seconds for 2 hour timeWindow charts); this is only when the window tab is visible and "playing". Augment `avgInterval` and/or `intervalsPerRefresh` if you want to reduce the frequency of those bursts.
 
@@ -249,9 +265,10 @@ Logical errors in the specs and errors in the data returned by Signal K may also
 Some tracing options are provided in `./js/stripcharts_options.js`. Tracing occurs below the displayed charts.
 
 ## **Functional improvements**
-- [ ] Filter by sources: in a chart specs, at path level, specify sources wanted as an array
-- [ ] Filter out from the specs the path/sources which are never provided by the signalk server
+- [v] Filter by source: in a chart specs, at path level, specify source~~s wanted as an array~~
+- [ ] ~~Filter out from the specs the path/sources which are never provided by the signalk server~~
 - [ ] Provide a better way to create/manage custom specs files and preserve them when installing new versions of the package
+- [ ] Units, add some missing units and conversions: Volt, Ampere, Watt, Joule, Coulomb, Ratio(0-n), Ratio(0%-100%), Cubic_meter, Cubic_meter_per_second, ...
 
 ## **Technical improvements**
 Signalk-stripcharts is essentially an html/javascript front-end application.
@@ -260,7 +277,7 @@ Therefore much technical improvement is of course possible.
 In particular the following improvements could be considered without structural changes:
 - [ ] Transpiling (Babel)  
 - [ ] Minification.  
-- [ ] Retrieval of boat data is inspired from Signal K websocket example. Possibly it could be replaced by the more robust https://www.npmjs.com/package/@signalk/client   
+- [ ] Retrieval of boat data is inspired from a simple Signal K websocket example. Possibly it could be replaced by the more robust https://github.com/SignalK/signalk-js-client 
 
 Any hints are most welcome.
 

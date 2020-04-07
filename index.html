@@ -20,6 +20,7 @@ button {font-size: 90%;}
             <input type="radio" name="server" value="demo.signalk.org" checked> Signalk test site, demo.signalk.org (will disconnect after a few minutes)<br>
             <input type="radio" name="server" value="thisServer"> The server & port from which this page was loaded<br>
             <input type="radio" name="server" value="localhost:3000"> Your local signalk server, localhost:3000 (if signalk-stripcharts installed on it)<br>
+            <input type="radio" name="server" value="prompt" > Be prompted for Signal K server address and port<br>
             <br>
         <p><b>Choose stripcharts specifications:</b></p>
             <input type="radio" name="specs" value="sail" checked> Sail<br>
@@ -37,10 +38,10 @@ button {font-size: 90%;}
         <button onclick="paths()"><b>Enumerate paths</b></button>
     </div>
 <script>
+var lastAddr = "000.000.000.00:3000";
 function launch() {
     let url = "./stripcharts.html?server=" + getChecked("server") + "&specs=" + getChecked("specs");
     window.open(url);
-    // or location.replace(url);  
 }
 function paths() {
     let url = "./enumActivePaths.html?server=" + getChecked("server");
@@ -52,6 +53,10 @@ function getChecked(radioName) {
             if(list[i].checked) {
                 let val = list[i].value;
                 val = (radioName == "server" && val == "thisServer") ? window.location.host:val;
+                if (radioName == "server" && val == "prompt") {
+                    val = prompt("Enter Signal K address", lastAddr);
+                    lastAddr = val;
+                }
                 return val;
             }
         }

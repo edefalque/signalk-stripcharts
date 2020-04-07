@@ -7,7 +7,7 @@
     </head>
 <body>
 
-<h3>Derived active paths with their "$source", and their sourceKeys if multiple "values"</h3>
+<h3>Derived active paths with their "$source", and "allSources" if multiple "values"</h3>
     <p id="result"></p>
 <h3>Above array is derived from following Signalk self content</h3>
     <p id="self"></p>
@@ -62,10 +62,10 @@ function addPath(objName, obj, pth ) {   // recursive function
         pthObj.path = pth;
         pthObj.$source = obj.$source;
         if ("values" in obj) {
-            pthObj.sourceKeys = [];
+            pthObj.allSources = [];
             for (const src in obj.values) {
                 // if (obj.values.hasOwnProperty(src)) {
-                    pthObj.sourceKeys.push(src);
+                    pthObj.allSources.push(src);
                 //}
             }
         }
