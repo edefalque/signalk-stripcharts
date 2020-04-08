@@ -1,6 +1,6 @@
 # Signalk-stripcharts: generate strip charts from Signal K live boat data. 
 
-> New in version 0.0.8: filter source, e.g `path="navigation.speedOverGround[gps.1]", ...`
+  > New in version 0.0.8: [Filtering by sources](#filtering-by-sources), e.g `path="navigation.speedOverGround[gps.1]", ...`
 
 A stripchart displays the most recent boat data (from one or more Signal K paths) as a graph along a time axis (x-axis).
 Legends identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window plotting the true wind speed (TWS) and apparent wind speed (AWS):
@@ -22,13 +22,14 @@ Now it's time to install and start using the default charts specifications provi
     + [Install on a client device](#install-on-a-client-device)
     + [Install on a node server - typically the boat Signal K server](#install-on-a-node-server-typically-the-boat-signal-k-server)
   * [Basic usage](#basic-usage)
-    + [y- and y2-axis buttons](#yand-y2-axis-buttons)
+    + [y- and y2-axis buttons](#y--and-y2-axis-buttons)
     + [Drop-down list](#drop-down-list)
     + [Main buttons](#main-buttons)
   * [How it works](#how-it-works)
   * [Customization](#customization)
     + [Chart specifications](#chart-specifications)
       - [Derived data](#derived-data)
+      - [Filtering by sources](#filtering-by-sources)
       - [Legends and lines colors](#legends-and-lines-colors)
     + [Unit conversion](#unit-conversion)
     + [General options](#general-options)
@@ -164,14 +165,6 @@ When the application is started as an url, the following "query" parameters must
 
 The application subscribes to the Signal K server deltas for all the paths in the set. The values are then continuously collected and aggregated for all charts in a set (using the Streaming WebSocket API).
 
-Different sources may provide data for the same path; as needed, the `path` property may be extended to filter a specific source, e.g. `navigation.speedOverGround[gps.1]`. The sources corresponding to a path on your Signal K server can be obtained from the launch menu provided that the corresponding instrument is on and connected. A certain path may be listed several times in the chart specs, e.g.:
-```javascript
-{ path: "navigation.speedOverGround[gps.1]", AVG: "SOG1" },
-{ path: "navigation.speedOverGround[gps.2]", AVG: "SOG2" },
-{ path: "navigation.speedOverGround", AVG: "SOGx" },
-```
-The first two lines will collect data each respectively from `gps.1` and `gps.2`. The third line will collect SOG data from any other sources. If a line collects data from different poorly calibrated sources, the line plotted might be "jumpy" (note: the average computation will be influenced by the frequency at which the data is provided by the two sources).
-
 At any one time, two charts can be displayed as selected by the user from drop down lists.
 If the user selects `none` in one of the drop down lists, the remaining chart is extended to the whole window area.
 
@@ -187,7 +180,7 @@ The following specifications files are provided at installation:
 
 Each of them can be started in its own browser tab and run concurrently.
 
-Additionally, `sources_filtering_example.js` is provided (read comments in the file before running).
+
 
 In a specification file, a chart specification can be derived from another chart and only the properties that differ need to be specified (e.g. a two-hours chart can be derived from a ten-minutes chart, with most of the properties inherited). Inheritance is provided at the first level of properties only.
 
@@ -211,10 +204,22 @@ Use the following Signal K dashboard menus:
 - `Server/Plugin Config/Derived Data` in order to configure and start path derivation from existing paths; see https://github.com/SignalK/signalk-derived-data (you may have to instal the plugin first from Signal K `Appstore`)
 - `Data Browser` in order to visualize the active and derived paths with their current values
 
+#### Filtering by sources
+Different sources may provide data for the same path; as needed, the `path` property may be extended to filter a specific source, e.g. `navigation.speedOverGround[gps.1]`. The sources corresponding to a path on your Signal K server can be obtained from the launch menu provided that the corresponding instrument is on and connected. A certain path may be listed several times in the chart specs, e.g.:
+```javascript
+{ path: "navigation.speedOverGround[gps.1]", AVG: "SOG1" },
+{ path: "navigation.speedOverGround[gps.2]", AVG: "SOG2" },
+{ path: "navigation.speedOverGround", AVG: "SOGx" },
+```
+The first two lines will collect data each respectively from `gps.1` and `gps.2`. The third line will collect SOG data from any other sources. If a line collects data from different poorly calibrated sources, the line plotted might be "jumpy" (note: the average computation will be influenced by the frequency at which the data is provided by the two sources).
+
+An example is provided in `./specs/sources_filtering_example.js`  (read comments in the file before running: it runs on a test log file provided with Signal K node server).
+
 #### Legends and lines colors
 Colors can be specified per legend at the bottom of the chart specifications file in order to insure consistency accross multiple charts of a same set.
 If not provided colors will be assigned automatically by the c3 library.
 See `sail.js` for how to assign colors.
+
 
 ### Unit conversion
 `signalk-stripcharts/specs/units` provides the list of Signal K units and charting units (not yet a complete set), with the conversion factors and algorithms.
