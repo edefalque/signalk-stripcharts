@@ -1,5 +1,7 @@
 # Signalk-stripcharts: generate strip charts from Signal K live boat data. 
 
+> New in version 0.0.8: filter source, e.g `path="navigation.speedOverGround[gps.1]", ...`
+
 A stripchart displays the most recent boat data (from one or more Signal K paths) as a graph along a time axis (x-axis).
 Legends identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window plotting the true wind speed (TWS) and apparent wind speed (AWS):
 
@@ -131,7 +133,7 @@ A chart is primarily specified by:
 For each path the charted value can be the average (`AVG`), the maximum (`MAX`) and/or the minimum (`MIN`) of the values received from Signal K during the averaging period. The averaging period (`avgInterval`) should be set such that the ratio `timeWindow`/`avgInterval` is between 300 and 1000 (i.e. a reasonable number of plots along the `timeWindow`); `avgInterval` must be longer than the sampling period defined in the Signal K subscription period (`subscribePolicy.period` option), which is typically 1 second. By default, the chart is refreshed every `avgInterval` (provided that some new data has come for that chart).
 When data stops coming for a particular path, it is "hotdecked" from the last data received until new data arrives; hotdecking stops after `hotdeckSec` seconds (default 60 in options) and thereafter the corresponding data will be 0 (in Signal K unit) indicating probably that the corresponding instrument was disconnected or switched off.
 
-A chart specification is provided as a Javascript object.
+A chart specification is provided as a JavaScript object.
 Here is the specification for the chart shown at the top of this document:
 
 ```javascript
@@ -168,10 +170,10 @@ Different sources may provide data for the same path; as needed, the `path` prop
 { path: "navigation.speedOverGround[gps.2]", AVG: "SOG2" },
 { path: "navigation.speedOverGround", AVG: "SOGx" },
 ```
-The first two lines will collect data each respectively from `gps.1` and `gps.2`. The third line will collect SOG data from any other sources. If a line collect data from different poorly calibrated sources, the line plotted might be "jumpy" (note: the average computation will be influenced by the frequency at which the data is provided by the two sources).
+The first two lines will collect data each respectively from `gps.1` and `gps.2`. The third line will collect SOG data from any other sources. If a line collects data from different poorly calibrated sources, the line plotted might be "jumpy" (note: the average computation will be influenced by the frequency at which the data is provided by the two sources).
 
 At any one time, two charts can be displayed as selected by the user from drop down lists.
-If the user selects `none` in one of the drop down lists, the remaining chart covers the whole window area.
+If the user selects `none` in one of the drop down lists, the remaining chart is extended to the whole window area.
 
 Charts can be paused. When paused, data collection continues "behind the scene". And the charts display will catch up when "unpaused". When the chart window is minimized or not in view, the charts are paused likewise and will catch up when brought to view. This minimizes processing load.
 
@@ -272,7 +274,7 @@ Some tracing options are provided in `./js/stripcharts_options.js`. Tracing occu
 
 ## Technical improvements
 Signalk-stripcharts is essentially an html/javascript front-end application.
-It was developed with no or very limited prior knowledge of Linux, Javascript, HTML, CSS, Signal K, Node.js and other js-related tools.
+It was developed with no or very limited prior knowledge of Linux, JavaScript, HTML, CSS, Signal K, Node.js and other js-related tools.
 Therefore much technical improvement is of course possible.
 In particular the following improvements could be considered without structural changes:
 - [ ] Transpiling (Babel)  
