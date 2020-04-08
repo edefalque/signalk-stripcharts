@@ -15,38 +15,38 @@ Now it's time to install and start using the default charts specifications provi
 
 **Table of contents:**
 
-  * [**Installation**](#--installation--)
-    + [**Install as Webapp from Signal K Dashboard**](#--install-as-webapp-from-signal-k-dashboard--)
-    + [**Install on a client device**](#--install-on-a-client-device--)
-    + [**Install on a node server - typically the boat Signal K server**](#--install-on-a-node-server---typically-the-boat-signal-k-server--)
-  * [**Basic usage**](#--basic-usage--)
-    + [**y- and y2-axis buttons**](#--y--and-y2-axis-buttons--)
-    + [**Drop-down list**](#--drop-down-list--)
-    + [**Main buttons**](#--main-buttons--)
-  * [**How it works**](#--how-it-works--)
-  * [**Customization**](#--customization--)
-    + [**Chart specifications**](#--chart-specifications--)
+  * [Installation](#installation)
+    + [Install as Webapp from Signal K Dashboard](#install-as-webapp-from-signal-k-dashboard)
+    + [Install on a client device](#install-on-a-client-device)
+    + [Install on a node server - typically the boat Signal K server](#install-on-a-node-server-typically-the-boat-signal-k-server)
+  * [Basic usage](#basic-usage)
+    + [y- and y2-axis buttons](#yand-y2-axis-buttons)
+    + [Drop-down list](#drop-down-list)
+    + [Main buttons](#main-buttons)
+  * [How it works](#how-it-works)
+  * [Customization](#customization)
+    + [Chart specifications](#chart-specifications)
       - [Derived data](#derived-data)
       - [Legends and lines colors](#legends-and-lines-colors)
-    + [**Unit conversion**](#--unit-conversion--)
-    + [**General options**](#--general-options--)
-  * [**Browser compatibility**](#--browser-compatibility--)
-  * [**CPU and memory requirements**](#--cpu-and-memory-requirements--)
-  * [**Troubleshooting**](#--troubleshooting--)
-  * [**Functional improvements**](#--functional-improvements--)
-  * [**Technical improvements**](#--technical-improvements--)
-  * [**Credits**](#--credits--)
+    + [Unit conversion](#unit-conversion)
+    + [General options](#general-options)
+  * [Browser compatibility](#browser-compatibility)
+  * [CPU and memory requirements on the client side](#cpu-and-memory-requirements-on-the-client-side)
+  * [Troubleshooting](#troubleshooting)
+  * [Functional improvements](#functional-improvements)
+  * [Technical improvements](#technical-improvements)
+  * [Credits](#credits)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
-## **Installation**
+## Installation
 
 Signalk-stripcharts comes with all required dependencies (including c3 charting library and d3 visualization library).
 
 Choose one of the following 3 methods as applicable or desired:
 
-### **Install as Webapp from Signal K Dashboard**
+### Install as Webapp from Signal K Dashboard
 
 If Signal K node server (https://github.com/SignalK/signalk-server-node) is installed on your server:
 - login to the Signal K dashboard
@@ -57,17 +57,17 @@ If Signal K node server (https://github.com/SignalK/signalk-server-node) is inst
 
 You can now start signalk-stripcharts launcher from the dashboard `Webapps` menu.
 
-### **Install on a client device**
+### Install on a client device
 - Download the ZIP file from https://github.com/edefalque/signalk-stripcharts and unzip in a folder.
 
 (by default, it will be installed in a folder named `signalk-stripcharts-master`; rename folder `signalk-stripcharts`)
 
-### **Install on a node server - typically the boat Signal K server**
+### Install on a node server - typically the boat Signal K server
 - Use npm: `[sudo] npm install signalk-stripcharts`
 
 This will install Signalk-stripcharts under the closest node_modules folder higher up in the hierarchy.
 
-## **Basic usage**
+## Basic usage
 
 Start the launch menu:
 - **If installed as a Signal K Webapps**: from your client or on the Signal K server, access the Signal K dashboard (e.g. *`mysignalkserveripaddr`*`:3000/signak` or `localhost:3000/admin`), then start Signalk-Stripcharts from the dashboard `Webapps` menu.
@@ -85,7 +85,7 @@ When the charts are displayed:
 
 You may wish to bookmark the launched page(s) for easier later launching. Modify the query parameters `server` & `specs` as needed, e.g. if you have defined your own charts specifications (see later section "How it works").
 
-### **y- and y2-axis buttons**
+### y- and y2-axis buttons
 
 These buttons affect the size and position of the plotted lines corresponding to the axis:
 
@@ -99,11 +99,11 @@ From left to right:
 - try to center the plot lines at present time
 - reset to the initial scale and position settings
 
-### **Drop-down list**
+### Drop-down list
 You can select any chart in the set for display.
 If you choose `none` the other chart will be displayed on the whole window (similar effect if the same chart is selected twice).
 
-### **Main buttons**
+### Main buttons
 
 ![window buttons](./PNG/readme4.PNG)
 
@@ -114,7 +114,7 @@ From left to right:
 
 They apply to the whole window.
 
-## **How it works**
+## How it works
 
 A chart contents and rendition is governed by the **chart specifications**, **unit conversion** and some **general options**.
 
@@ -162,7 +162,7 @@ When the application is started as an url, the following "query" parameters must
 
 The application subscribes to the Signal K server deltas for all the paths in the set. The values are then continuously collected and aggregated for all charts in a set (using the Streaming WebSocket API).
 
-Different sources may provide data for the same path; as needed, the `path` property may be extended to filter a specific source, e.g. `navigation.speedOverGround[gps.1]`. Sources corresponding to a path on your Signal K server can be obtained from the launch menu provided that the corresponding instrument is on and connected. A certain path may be listed several times in the chart specs, e.g.:
+Different sources may provide data for the same path; as needed, the `path` property may be extended to filter a specific source, e.g. `navigation.speedOverGround[gps.1]`. The sources corresponding to a path on your Signal K server can be obtained from the launch menu provided that the corresponding instrument is on and connected. A certain path may be listed several times in the chart specs, e.g.:
 ```javascript
 { path: "navigation.speedOverGround[gps.1]", AVG: "SOG1" },
 { path: "navigation.speedOverGround[gps.2]", AVG: "SOG2" },
@@ -192,10 +192,10 @@ In a specification file, a chart specification can be derived from another chart
 Signalk-stripcharts buffers having no persistency, they cannot be used to store the history.
 Persistency and more powerful charting capabilities can be provided with InfluxDB and Grafana as explained here (https://github.com/tkurki/signalk-to-influxdb/blob/master/README.md) or could be provided with the help of the history capability of Signal K if available.
 
-## **Customization**
+## Customization
 Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may then be less easily accessible. If installed on a Raspberry PI from Signal K Appstore, they will probably be in `$HOME/.signalk/node_modules/signalk-stripcharts/specs/`.
 
-### **Chart specifications**
+### Chart specifications
 The specifications files are installed in `signalk-stripcharts/specs/`. Ample comments are provided for those features that were not explained above.
 
 New specifications files can be easily derived from those provided at installation. Copy them under another name and edit them with a text editor, or better with a code editor such as Geany or Visual Studio Code. 
@@ -214,7 +214,7 @@ Colors can be specified per legend at the bottom of the chart specifications fil
 If not provided colors will be assigned automatically by the c3 library.
 See `sail.js` for how to assign colors.
 
-### **Unit conversion**
+### Unit conversion
 `signalk-stripcharts/specs/units` provides the list of Signal K units and charting units (not yet a complete set), with the conversion factors and algorithms.
 It also provides the following default properties for the y and y2 axis as a function of the charting unit:
 - `label`
@@ -225,7 +225,7 @@ Those can be overridden in the chart specs.
 
 A special unit `Percent` is provided. It allows to plot values of different units on a same "Percent" y or y2 axis by providing reference values in the Signal K unit for 0% and for 100%. See `engines.js` for an example with comments.
 
-### **General options**
+### General options
 Options governing all charts are given in `signalk-stripcharts/js/stripcharts_options.js`.
 See comments in the file. Some of those comments explain how time is managed in signalk-stripcharts.
 
@@ -236,7 +236,7 @@ They will then override the corresponding values in `stripcharts_options.js`.
 
 Invalid option values will be replaced by defaults.
 
-## **Browser compatibility**
+## Browser compatibility
 
 Signalk-stripcharts uses ECMAScript 2015 (ES6).
 
@@ -249,7 +249,7 @@ It seems to also work fine on:
 
 Recent non-ESR versions of Firefox show some svg rendition problems.
 
-## **CPU and memory requirements on the client side**
+## CPU and memory requirements on the client side
 
 On a Raspberry Pi 3B+ with signalk-stripcharts executing on a Chromium browser: a short burst of approximately 50% cpu consumption is observed when 2 charts corresponding to 6 paths are refreshed on the window (typically every 4 seconds for 10 minute timeWindow charts, or every 10 seconds for 2 hour timeWindow charts); this is only when the window tab is visible and "playing". Augment `avgInterval` and/or `intervalsPerRefresh` if you want to reduce the frequency of those bursts.
 
@@ -257,20 +257,20 @@ Between refreshing bursts, managing the data collection and aggregation for 10 c
 
 (measurements above are from the browser Task manager)
 
-## **Troubleshooting**
+## Troubleshooting
 
 Syntax errors in the charts specifications files will be caught by javascript.
 Logical errors in the specs and errors in the data returned by Signal K may also be reported. Inspect the browser console as needed.
 
 Some tracing options are provided in `./js/stripcharts_options.js`. Tracing occurs below the displayed charts.
 
-## **Functional improvements**
-- [v] Filter by source: in a chart specs, at path level, specify source~~s wanted as an array~~
+## Functional improvements
+- [x] Filter by source: in a chart specs, at path level, specify source~~s wanted as an array~~
 - [ ] ~~Filter out from the specs the path/sources which are never provided by the signalk server~~
 - [ ] Provide a better way to create/manage custom specs files and preserve them when installing new versions of the package
 - [ ] Units, add some missing units and conversions: Volt, Ampere, Watt, Joule, Coulomb, Ratio(0-n), Ratio(0%-100%), Cubic_meter, Cubic_meter_per_second, ...
 
-## **Technical improvements**
+## Technical improvements
 Signalk-stripcharts is essentially an html/javascript front-end application.
 It was developed with no or very limited prior knowledge of Linux, Javascript, HTML, CSS, Signal K, Node.js and other js-related tools.
 Therefore much technical improvement is of course possible.
@@ -281,7 +281,7 @@ In particular the following improvements could be considered without structural 
 
 Any hints are most welcome.
 
-## **Credits**
+## Credits
 The following open source or free software contributions have been especially inspiring:
 - NavMonPC stripcharts: http://www.navmonpc.com/
 - Signal K: http://signalk.org/
