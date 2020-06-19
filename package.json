@@ -1,6 +1,6 @@
 {
   "name": "signalk-stripcharts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate strip charts from Signal K live boat data",
   "main": "stripcharts.js",
    "repository": "https://github.com/edefalque/signalk-stripcharts",
