@@ -1,9 +1,8 @@
 {
   "name": "signalk-stripcharts",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "Generate strip charts from Signal K live boat data",
-  "main": "stripcharts.js", 
-  "repository": "https://github.com/edefalque/signalk-stripcharts",
+  "main": "stripcharts.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,11 +11,11 @@
     "signalk",
     "signal k",
     "signalk-webapp",
+    "influxDB",
     "openplotter",
     "navmonpc"
   ],
   "author": "Etienne Defalque <etienne@defalque.net>",
   "license": "MIT",
-  "dependencies": {
-  }
+  "dependencies": {},
 }

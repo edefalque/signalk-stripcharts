@@ -76,11 +76,20 @@
         <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
         </svg>
     </template>
+    <template id="fillIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-log-in">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+        <polyline points="10 17 15 12 10 7"></polyline>
+        <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+    </template>
 
     <div id="main" hidden>
     <div id="upperBar" class="bar">
  
-        <span id="yUpperCtl" class="yCtl">  
+        <span id="yCtlUpper" class="yCtl">  
             <button class="button unstyled" id="yZoomInU" onclick="zoomIn(upperChartObj, 'y')">
                 <script>insertIcon("zoomInIcon");</script></button>
             <button class="button unstyled" id="yZoomOutU" onclick="zoomOut(upperChartObj, 'y')">
@@ -93,6 +102,8 @@
                 <script>insertIcon("centerIcon");</script></button>
             <button class="button unstyled" id="yResetU" onclick="reset(upperChartObj, 'y')">
                 <script>insertIcon("resetIcon");</script></button>          
+            <button class="button unstyled" id="yFillU" onclick="document.activeElement.style.visibility='hidden'; fillFmInflux(upperChartObj);">
+                <script>insertIcon("fillIcon");</script></button>          
         </span>
 
         <span id="upperSelector" class="selector">  
@@ -102,8 +113,87 @@
         </span>
 
         <span id="windowCtl" class="wCtl">
+             <button class="button" id="clockButton" onclick="pickTime()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 24"
+                fill="none" stroke="#ff0000" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-clock">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <script>
+                    function pickTime() {
+                        if ( options.useInfluxDB && !modeIsPast) {
+                            // first time after clicking clockButton:
+                            // set pausePlay to play,
+                            // de-mode playPause button,
+                            // activate clockButton,
+                            // clear both views
+                            playIcon.style.display = "inline";
+                            pauseIcon.style.display = "none";
+                            viewPaused = true;
+                            modeIsPast = true;
+                            pausePlayButton.style.border = "none";
+                            clockButton.style.border = "2px solid #ff0000";
+                            upperChartObj.loadPastView();
+                            lowerChartObj.loadPastView();
+                        }
+                        skNow = new Date(Date.now() - timeOffset)
+                        if (pickedDate == null) {pickedDate = skNow; }    
+                        calPicker.reset(pickedDate);
+                        calPicker.open();
+                        return;
+                    }
+              </script>
+             <button class="button" id="pausePlay" onclick="pausePlay()">
+                <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -2 24 22"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-pause">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -2 24 22"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-play">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                  <script>
+                        var viewPaused = false;
+                        var pausedTime = 0;
+                        function pausePlay() {
+                            if ( options.useInfluxDB && modeIsPast) {
+                                refreshDisabled = true;
+                                modeIsPast = false;
+                                clearAllPastRows();  // free memory
+                                clockButton.style.border = "none";
+                                pausePlayButton.style.border = "2px solid #ff0000";
+                                viewPaused = false;
+                                pauseIcon.style.display = "inline";
+                                playIcon.style.display = "none";
+                                flushWaitingRows();
+                                refreshDisabled = false;
+                                return;
+                            }
+                            // otherwise:
+                            if (viewPaused == false) {  // was playing 
+                                viewPaused = true;
+                                pausedTime = Date.now() - timeOffset;
+                                upperChartObj.setXLabel();
+                                lowerChartObj.setXLabel();
+                                pauseIcon.style.display = "none";
+                                playIcon.style.display = "inline";
+                                // chart.zoom.enable(viewPaused); // enable chart zooming only when paused
+                            }
+                            else {   // was paused
+                                viewPaused = false;
+                                flushWaitingRows();  // just before ending pause
+                                pauseIcon.style.display = "inline";
+                                playIcon.style.display = "none";
+                            }
+                      }	
+                  </script>
+            </button>
             <button class="button" id="nightDay" onclick="toggleNightDay()">
-                <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
+                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="feather feather-sun">
                 <circle cx="12" cy="12" r="5"></circle>
@@ -116,63 +206,27 @@
                 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                 </svg>
-                <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="feather feather-moon">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
                  <script>
-                     document.getElementById("moon").style.display = "none";
                      function toggleNightDay() {
                         document.body.classList.toggle("night");
                         if (document.body.classList.contains("night")) {        
-                            document.getElementById("moon").style.display = "none";
-                            document.getElementById("sun").style.display = "inline";              
+                            moonIcon.style.display = "none";
+                            sunIcon.style.display = "inline";              
                         }
                         else {
-                            document.getElementById("moon").style.display = "inline";
-                            document.getElementById("sun").style.display = "none";                
+                            moonIcon.style.display = "inline";
+                            sunIcon.style.display = "none";                
                         }
                      }   
                  </script>
              </button>
-             <button class="button" id="pausePlay" onclick="togglePausePlay(this)">
-                <svg id="pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -2 24 22"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="feather feather-pause">
-                <rect x="6" y="4" width="4" height="16"></rect>
-                <rect x="14" y="4" width="4" height="16"></rect>
-                </svg>
-                <svg id="play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -2 24 22"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="feather feather-play">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                  <script>
-                        document.getElementById("play").style.display = "none";
-                        var pausePlayButton = document.getElementById("pausePlay");                     
-                        var chartPaused = false;
-                        function togglePausePlay(x) {
-                            if (chartPaused == false) {  // was playing
-                                upperChartObj.setPauseLabel("Paused on");
-                                lowerChartObj.setPauseLabel("Paused on");
-                                document.getElementById("pause").style.display = "none";
-                                document.getElementById("play").style.display = "inline";
-                                chartPaused = true;
-                                // chart.zoom.enable(chartPaused); // enable chart zooming only when paused
-                            }
-                            else {
-                                upperChartObj.resetPauseLabel();
-                                lowerChartObj.resetPauseLabel();
-                                flushWaitingRows();  // just before ending pause
-                                document.getElementById("pause").style.display = "inline";
-                                document.getElementById("play").style.display = "none";
-                                chartPaused = false;
-                            }
-                      }	
-                  </script>
-            </button> 
-            <button class="button" id="hang-up" disabled onclick="if(disconnect()) {ws.close();}">
+ 
+             <button class="button" id="hangUpButton" disabled onclick="disconnect()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -1 24 23"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="feather feather-phone-off">
@@ -180,14 +234,25 @@
                 <line x1="23" y1="1" x2="1" y2="23"></line></svg>
                 <script>
                     function disconnect() {
-                      let r = confirm("Disconnect from Signalk?");
-                      if (r == false) { return false; }
-                      return true;                                           
+                        let r = confirm("Disconnect from Signalk?");
+                        if (r == false) { return; }
+                        hangUpButton.disabled = true;
+                        timeDisconnected = Date.now() - timeOffset;
+                        skConnected = false;
+                        ws.close();
+                        if (!modeIsPast) {
+                            if (!viewPaused) {
+                                flushWaitingRows(); // will setXLabels
+                            } else {
+                                upperChartObj.setXLabel();
+                                lowerChartObj.setXLabel();
+                            }
+                        }
                     }
                 </script>
             </button>
         </span>
-        <span id="y2UpperCtl" class="yCtl">  
+        <span id="y2CtlUpper" class="yCtl" >  
             <button class="button unstyled" id="y2ZoomInU" onclick="zoomIn(upperChartObj, 'y2')">
                 <script>insertIcon("zoomInIcon");</script></button>
             <button class="button unstyled" id="y2ZoomOutU" onclick="zoomOut(upperChartObj, 'y2')">
@@ -199,7 +264,7 @@
             <button class="button unstyled" id="y2CenterU" onclick="center(upperChartObj, 'y2')">
                 <script>insertIcon("centerIcon");</script></button>
             <button class="button unstyled" id="y2ResetU" onclick="reset(upperChartObj, 'y2')">
-                <script>insertIcon("resetIcon");</script></button>          
+                <script>insertIcon("resetIcon");</script></button>       
         </span>
 
     </div>
@@ -208,7 +273,7 @@
 
     <div id="lowerBar" class="bar">
 
-        <span id="yLowerCtl" class="yCtl" >  
+        <span id="yCtlLower" class="yCtl" >  
             <button class="button unstyled" id="yZoomInL" onclick="zoomIn(lowerChartObj, 'y')">
                 <script>insertIcon("zoomInIcon");</script></button>
             <button class="button unstyled" id="yZoomOutL" onclick="zoomOut(lowerChartObj, 'y')">
@@ -220,7 +285,9 @@
             <button class="button unstyled" id="yCenterL" onclick="center(lowerChartObj, 'y')">
                 <script>insertIcon("centerIcon");</script></button>
             <button class="button unstyled" id="yResetL" onclick="reset(lowerChartObj, 'y')">
-                <script>insertIcon("resetIcon");</script></button>          
+                <script>insertIcon("resetIcon");</script></button>
+            <button class="button unstyled" id="yFillL" onclick="document.activeElement.style.visibility='hidden'; fillFmInflux(lowerChartObj);">
+                <script>insertIcon("fillIcon");</script></button>                       
         </span>
         
         <span id="lowerSelector" class="selector">  
@@ -229,7 +296,7 @@
             </select>
         </span>
  
-        <span id="y2LowerCtl" class="yCtl">  
+        <span id="y2CtlLower" class="yCtl">  
             <button class="button unstyled" id="y2ZoomInL" onclick="zoomIn(lowerChartObj, 'y2')">
                 <script>insertIcon("zoomInIcon");</script></button>
             <button class="button unstyled" id="y2ZoomOutL" onclick="zoomOut(lowerChartObj, 'y2')">
@@ -250,25 +317,56 @@
 <!-- debug area -->
 <div id="logArea"></div>
 
-<!-- Dynamically load stripCharts specs file provided by the query string: see stripCharts.js -->
-<!-- instead of <script src="stripChartsSpecs-Sail.js")></script>    -->
+<script>
+    // Define short names for some elements
+    var yCtlU = document.getElementById("yCtlUpper");
+    var yFillU = document.getElementById("yFillU");
+    var y2CtlU = document.getElementById("y2CtlUpper");
+    
+    var yCtlL = document.getElementById("yCtlLower");
+    var yFillL = document.getElementById("yFillL");
+    var y2CtlL = document.getElementById("y2CtlLower");
+    
+    let selectUpper = document.getElementById("selectUpper");
+    var selectLower = document.getElementById("selectLower");
+    
+    var pausePlayButton = document.getElementById("pausePlay");
+    var playIcon = document.getElementById("playIcon");
+    var pauseIcon = document.getElementById("pauseIcon");
+    
+    var moonIcon = document.getElementById("moonIcon");
+    var sunIcon = document.getElementById("sunIcon");              
+    
+    var hangUpButton = document.getElementById("hangUpButton");
+    
+    </script>
     
 </body>
 
 <!-- Load d3 and c3 -->
-<script src="./d3/d3.min.js" charset="utf-8"></script>
-<link href="./c3/c3.css" rel="stylesheet">
-<script src="./c3/c3.min.js"></script>
+<script src="./dist/d3/d3.min.js" charset="utf-8"></script>
+<link href="./dist/c3/c3.css" rel="stylesheet">
+<script src="./dist/c3/c3.min.js"></script>
+
+<!-- Load influx ligth client bundle script -->
+<script src="./dist/influx/influx-lib-bundle.js"></script>
+
+<!-- Load simplepicker css & script -->
+<link rel="stylesheet" href="./dist/datepicker/simplepicker.css">
+<script src="./dist/datepicker/simplepicker.js"></script>
 
 <!-- Load stripChartsClass script -->
-<script src="./js/stripchart_class.js"></script>
+<script src="./lib/stripchart_class.js"></script>
 
 <!-- Load stripCharts run-options, units and colors -->
-<script src="./js/stripcharts_options.js"></script>
+<script src="./specs/stripcharts_options.js"></script>
 <script src="./specs/units.js"></script>
 
 <!-- Load stripcharts css and main script -->
-<link href="stripcharts.css" rel="stylesheet">
-<script src="./js/stripcharts.js"></script>
+<link href="./lib/stripcharts.css" rel="stylesheet">
+<script src="./lib/stripcharts.js"></script>
+
+<!-- Note: stripCharts specs file is loaded dynamically;
+    its name is provided by the query string: see stripCharts.js -->
 
 </html>

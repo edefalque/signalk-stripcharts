@@ -9,12 +9,20 @@
     <meta charset="utf-8">
 </head>
 <style>
-body {background-color: black; color: White; font-size: 120%; margin-left: 200px;}
+body {background-color: black; color: #ffcc99;}
+#div2 { font-size: 120%; margin-left: 200px;}
+#div1 { font-size: 100%; margin-left: 60px; color: red;}
+#div1 a{ color: LightGrey;}
+
 input {height:14px; width:14px;}
 button {font-size: 90%;}
 </style>
 <body>
-    <div>
+    <div id="div1">
+        <br>
+        <a target="_blank" href="./README.pdf">signalk-stripcharts v0.1.0 - see new InfluxDB interface</a>
+    </div>
+    <div id="div2">
         <br>
         <p><b>Choose signalk server:</b></p>
             <input type="radio" name="server" value="demo.signalk.org" checked> Signalk test site, demo.signalk.org (will disconnect after a few minutes)<br>
@@ -31,12 +39,14 @@ button {font-size: 90%;}
                  prefix them, eg with '_', in order to distinguish them from the provided ones -->  
             <br>
         <button onclick="launch()"><b>Launch signalk-stripcharts </b></button>
-        <span style="font-size: 70%; margin-left: 20px;">(after launching, you may find practical to bookmark the launched page)</span>
+        <span style="font-size: 75%; margin-left: 20px;">(after launching, you may find practical to bookmark the launched page)</span>
         <br>
         <br>
         <p><b>Helper for specifications  -  Enumerate server active paths and their sources</b></p>
         <button onclick="paths()"><b>Enumerate paths</b></button>
     </div>
+
+
 <script>
 var lastAddr = "000.000.000.00:3000";
 function launch() {
