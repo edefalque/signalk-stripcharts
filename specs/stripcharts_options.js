@@ -85,7 +85,7 @@ timeTolSec: 0,  //url parm
 
 /* InfluxDB options
 ********************/
-useInfluxDB: true,
+useInfluxDB: false,
 influxDB: {
   dbName: "boatdata",
   retentionPolicies: [
