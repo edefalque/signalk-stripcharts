@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Generate strip charts from Signal K live boat data",
   "main": "stripcharts.js",
+   "repository": "https://github.com/edefalque/signalk-stripcharts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
