@@ -4,7 +4,7 @@
   > New in version 0.1.x: [Charting past data from InfluxDB](#charting-past-data-from-influxdb)
   
   > New in version 0.0.8: [Filtering by sources](#filtering-by-sources), e.g `path="navigation.speedOverGround[gps.1]", ...`
-
+<div><sup><a  style="color:red;" href="#table-of-contents">Jump to TOC</a></sup></div>
 ## Introduction
 
 A stripchart displays the most recent boat data from one or more Signal K paths as a graph along a time axis (x-axis).
