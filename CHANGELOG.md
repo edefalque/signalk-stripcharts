@@ -1,5 +1,8 @@
-## V0.1.0
-
+## v0.1.x
+ 
+2020-06-20
+ - publish as v0.1.1 in npm
+ 
 2020-06-12
  - Update README_md v0.1.0
  - package folders structure modified
