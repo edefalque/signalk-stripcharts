@@ -88,12 +88,12 @@ You can now start signalk-stripcharts launcher from the dashboard `Webapps` menu
 
 This will install signalk-stripcharts under the closest node_modules folder higher up in the hierarchy.
 
-<div align="right"><sup><a  style="color:red;" href="#table-of-contents">↥ back to TOC</a></sup></div>
-
 ### Install on a client device
 - Download the [ZIP file](https://github.com/edefalque/signalk-stripcharts) and unzip it in a folder.
 
 (by default, it will be installed in a folder named `signalk-stripcharts-master`; rename folder `signalk-stripcharts`)
+
+<div align="right"><sup><a  style="color:red;" href="#table-of-contents">↥ back to TOC</a></sup></div>
 
 ## Basic usage
 
