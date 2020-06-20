@@ -1,7 +1,7 @@
 # Signalk-stripcharts - Generate strip charts from Signal K live boat data. 
 
 
-  > New in version 0.1.0: [Charting past data from InfluxDB](#charting-past-data-from-influxdb)
+  > New in version 0.1.x: [Charting past data from InfluxDB](#charting-past-data-from-influxdb)
   
   > New in version 0.0.8: [Filtering by sources](#filtering-by-sources), e.g `path="navigation.speedOverGround[gps.1]", ...`
 
@@ -112,7 +112,7 @@ When the charts are displayed:
 
 You may wish to bookmark the launched page(s) for easier later launching. Modify the query parameters `server` & `specs` as needed, e.g. if you have defined your own charts specifications (see later section "How it works").
 
-The following sections explain signalk-stripcharts accessing and charting live data  only provided by a Signal K server: this is the default configuration at installation. A [later chapter](#charting-past-data-from-influxdb) will explain how to set up an InfluxDB database to store historical boat data in order to chart it with signalk-stripcharts.
+The following sections explain signalk-stripcharts accessing and charting only live data provided by a Signal K server: this is the default configuration at installation. A [later chapter](#charting-past-data-from-influxdb) will explain how to set up an InfluxDB database to store historical boat data and chart it with signalk-stripcharts.
 
 ### y- and y2-axis buttons
 
