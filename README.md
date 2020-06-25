@@ -418,11 +418,7 @@ Pick a date/time a few hours or days in the past and click `OK`: the origins of 
 
 You can further explore the past by clicking the clock-button and selecting another date/time.
 
-When the play button is clicked, the **live mode** is again activated, the charts x-axis are set to the current time and become live-updated again (playing state).
-
-### InfluxDB and filtering by sources
-
-At the time of writing this document, the InfluxDB to Signal K Plugin writes a value for a path every sampling period (Resolution parameter) *irrespective of the source*; only the value of one source will be written every sampling period and a "fast" source will be written more often than a "slow" one. Hence, when charting 2 sources separately (see [Filtering by sources](#filtering-by-sources) ) from InfluxDB data, the plot line of the "fast" source will alternate with the plot line of the other and the fast source line segments will be longer than the slow source line segments. Ideally the plugin should write the last known value of every path/source every sampling period.
+When the play button is clicked, the **live mode** is again activated, the charts x-axis are set to the current time and, unless Signal K was disconnected previously, become live-updated again (playing state).
 
 <div align="right"><sup><a  style="color:red;" href="#table-of-contents">↥ back to TOC</a></sup></div>
 
