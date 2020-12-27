@@ -1,9 +1,11 @@
-// You may overide some options here ...
+//=================== Influx interface example ===========================
+// Derived from the filtering sources example (see "Before running ..." below)
+// Also shows how to override options and units as needed
+
+// Override some options here ...
 options.useInfluxDB = true;
-// Signal k subscribePolicy set to "instant"
-// (provides better results when filtering on sources and same path sources "compete")
-options.subscribePolicy.policy= "instant";
-options.subscribePolicy.minPeriod= 100;
+// Complement units here ...
+path_skUnit.electrical_batteries_1_temperature = "Kelvin"; 
 
 //=================== Filtering sources, an example ======================= 
 // Before running those charts, on the server:
@@ -11,12 +13,11 @@ options.subscribePolicy.minPeriod= 100;
 //   - disable all other connections
 //   - restart the server
 // Have a look on menu Data Browser
-// Note: On real data such charts may help in calibrating some instruments
 
 const Speeds_10min =
     { stripChartName: "Speeds_10min",
         timeWindow: 10*60,          // 10min
-        avgInterval: 1,           // 1 sec
+        avgInterval: 2,             // 2 sec
         x: { label: "min/sec ago", tickCount: 11 },
         y: { unit: "Knot" },  // Meters_per_second
         paths: 
@@ -27,11 +28,6 @@ const Speeds_10min =
             { path: "environment.wind.speedTrue", AVG: "TWS" },
         ]
     };
-
-const Sp_10min_dup = derivedFrom(Speeds_10min,
-    { stripChartName: "Sp_10min_dup",
-    }
-);
 
 const Speeds_2h = derivedFrom(Speeds_10min,
     { stripChartName: "Speeds_2h",
@@ -53,17 +49,17 @@ const Batt_temp = derivedFrom(Speeds_10min,
 
 // ===================== stripCharts set ============================
 // define stripChartsSpecs as a set of selectable stripCharts
-// identify the two charts that will display at startup (optional)
 
     const  stripChartsSpecs = {
         name: "influx test",    // shows in tab title
         stripCharts: [
             Speeds_10min,
-            Sp_10min_dup,
+            Speeds_2h,
             Batt_temp
         ],
+        // identify the two charts that will display at startup (optional)
         initialUpperView: Speeds_10min,  
-        initialLowerView: Sp_10min_dup  
+        initialLowerView: Speeds_2h  
 };
 
 
