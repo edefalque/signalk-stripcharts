@@ -2,7 +2,7 @@
 // Before running those charts, on the server:
 //   - enable connection 'aava-n2k.data' in SignalK Dashboard, menu Server/Connections
 //   - disable all other connections
-//   - restart the server
+//   - restart SignalK
 // Have a look on menu Data Browser
 // Note: On real data such charts may help in calibrating some instruments
 
@@ -70,8 +70,4 @@ const Direction_ALL_sources = derivedFrom(Directions_per_source,
 };
 
 // You may overide some options here ...
-// When filtering on sources, minPeriod should be << avgInterval.
-// This will decrease chance a "fast" source mask another one when filtering on sources
-// (a 'large' minPeriod may result in some horizontal "hotdecking" plot segments).
-subscribePolicy.minPeriod = 20;
 

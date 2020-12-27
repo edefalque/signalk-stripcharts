@@ -1,9 +1,9 @@
 {
   "name": "signalk-stripcharts",
-  "version": "0.1.1",
-  "description": "Generate strip charts from Signal K live boat data",
+  "version": "0.2.0",
+  "description": "Generate strip charts from Signal K live boat data and from InfluxDB past boat data",
   "main": "stripcharts.js",
-   "repository": "https://github.com/edefalque/signalk-stripcharts",
+  "repository": "https://github.com/edefalque/signalk-stripcharts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +18,5 @@
   ],
   "author": "Etienne Defalque <etienne@defalque.net>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {}
 }

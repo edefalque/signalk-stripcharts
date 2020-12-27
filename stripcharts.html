@@ -160,8 +160,8 @@
                         var viewPaused = false;
                         var pausedTime = 0;
                         function pausePlay() {
-                            if ( options.useInfluxDB && modeIsPast) {
-                                refreshDisabled = true;
+                            if (modeIsPast) {
+                                backFromPast = true;
                                 modeIsPast = false;
                                 clearAllPastRows();  // free memory
                                 clockButton.style.border = "none";
@@ -169,8 +169,8 @@
                                 viewPaused = false;
                                 pauseIcon.style.display = "inline";
                                 playIcon.style.display = "none";
-                                flushWaitingRows();
-                                refreshDisabled = false;
+                                flushWaitingRows();  // will setXLabel
+                                backFromPast = false;
                                 return;
                             }
                             // otherwise:
