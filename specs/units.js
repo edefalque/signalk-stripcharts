@@ -98,7 +98,9 @@ const skUnitsConversion = {
 	Hertz2Revolutions_per_minute: 60,
 	Pascal2Pounds_per_square_inch: 0.000145038,
 	Pascal2Bar: 0.00001,
-	Pascal2Millibar: 0.01
+	Pascal2Millibar: 0.01,
+	Kelvin2Fahrenheit: -2222,	// formula
+	Kelvin2Celsius: -3333		// formula
 	}
 
 // function returns multiplier for simple "multiplicative" unit conversions or a formula selector (negative integer) for the other conversions
@@ -112,8 +114,8 @@ function getConvMultiplier (path, chartUnit) {
 	let convKey = path_skUnit[path_] + "2" + chartUnit;
 	if (typeof skUnitsConversion[convKey] == "number")
 		{ multiplier = skUnitsConversion[convKey]; }
-	else if (chartUnit == "Fahrenheit")  { multiplier = -2222; }  // negative value for special formula
-	// insert here new units with "non-multiplicative" conversion as needed
+	// else if (chartUnit == "Fahrenheit")  { multiplier = -2222; }  // negative value for special formula
+	//// insert here new units with "non-multiplicative" conversion as needed
 	else { console.log("Missing conversion factor/formula: " + convKey); }
 	return multiplier;    // missing defaults to 0
 }  
@@ -125,8 +127,11 @@ function convertAny(value, tuple) {  // negative tuple[0] identifies special for
 		case -1111:	// reserved for sign inversion (not used so far)
 			result = -value;
 			break;
-		case -2222: 	// Celsius to °F
-			result = value * 9/5 + 32; 
+		case -2222: 	// Kelvin to °F
+			result = (value - 273.15) * 9/5 + 32; 
+			break;
+		case -3333: 	// Kelvin to °C
+			result = value - 273.15; 
 			break;
 		default:
 			 result = value * tuple[0] + tuple[1];
