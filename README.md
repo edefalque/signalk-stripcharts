@@ -3,12 +3,14 @@
 
   > New in version 0.2.x: Charting past data from InfluxDB made easier (you may need to adapt your [options](#stripcharts-options-for-influxdb) )
 
+  Note: The latest `README.md` and `README.pdf` versions are available in `GitHub`, not necessarily in `npmjs.com`, as a new npm version is not created for minor improvements to the documentation.
+
 <div><sup><a  style="color:red;" href="#table-of-contents">Jump to TOC</a></sup></div>
 
 ## Introduction
 
 A stripchart displays the most recent live boat data from one or more Signal K paths as a graph along a time axis (x-axis). The graph flows from left (most recent) to right: this direction allows the most recent data to be observed near the left hand side y-axis and its scale.
-Legends under the x-axis identify by abbreviations what paths are charted. Here is a chart with a 10 minutes time window plotting the true wind speed (TWS) and apparent wind speed (AWS):
+Legends under the x-axis identify by abbreviations what paths are charted. Here is a (strip)chart with a 10 minutes time window plotting the true wind speed (TWS) and apparent wind speed (AWS):
 
 ![simple chart](./PNG/readme1.PNG)
 
@@ -209,6 +211,8 @@ The following specifications files are provided at installation:
 - `sail.js`
 - `environment.js`
 - `engines.js`
+- `sources_filtering_example.js`, see [Filtering by sources](#filtering-by-sources)
+- `influx_test.js`, see [Charting past data from InfluxDB](#charting-past-data-from-influxdb)
 
 Each of them can be started in its own browser tab and run concurrently.
 
@@ -242,7 +246,7 @@ Different sources may provide data for the same path; as needed, the `path` prop
 ```
 The first two "path lines" will collect data each respectively from `gps.1` and from `gps.2`. The third line will collect SOG data from all sources (including the sources identified in line 1 and 2). 
 
-An example is provided in [sources_filtering_example.js](./specs/sources_filtering_example.js)  (read comments in the file before running: it runs on a test log file provided with Signal K node server).
+An example is provided in [sources_filtering_example.js](./specs/sources_filtering_example.js)  (read the comments in the file before running: it runs on a test log file provided with Signal K node server).
 
 #### Legends and lines colors
 Colors can be specified per legend at the bottom of the chart specifications file in order to insure consistency accross multiple charts of a same set. Specification file [sail.js](./specs/sail.js) shows how to assign colors.
@@ -348,7 +352,9 @@ Alternatively you could leave stripcharts_options.js unchanged and add the line 
 
 Note: the InfluxDB plugin `resolution` parameter value should be provided as SK2InfluxResolution_ms if not equal to 1000 msec. 
 
-Now start a chart as explained above in [Basic usage](#basic-usage) and access past data as explained below.
+Now start a stripchart as explained above in [Basic usage](#basic-usage) and access past data as explained below.
+
+An example is provided in [influx_test.js](./specs/influx_test.js)  (read the comments in the file before running: it runs on a test log file provided with Signal K node server)
 
 Note: If you have been using InfluxDB before with several Retention Policies and Continuous Queries, you may need to further refine the options: read [Stripcharts options for InfluxDB](#stripcharts-options-for-influxdb)
 
