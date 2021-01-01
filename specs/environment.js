@@ -13,7 +13,7 @@ const Water_10min =
 		intervalsPerRefresh: 2,   	// default 1
 		x: { label: "min/sec ago", tickCount: 11 },   // a tick every min (10, + 1 for zero)
 		y: { unit: "Meter" },
-		y2: { unit: "Celsius", min: -5, max: 30 },    // here default min & max for "Celsius" unit are superceded
+		y2: { unit: "Celsius", min: -5, max: 45 },    // here default min & max for "Celsius" unit are superceded
 		paths: 
 		[
 			{ path: "environment.depth.belowTransducer", MIN: "minDepth" },  
@@ -75,7 +75,7 @@ const  stripChartsSpecs = {
 		Air_2h,
 		Air_24h
 	],
-	initialUpperView: Water_2h,    	// one of the stripCharts
+	initialUpperView: Water_10min,    	// one of the stripCharts
 	initialLowerView: Air_2h     	// another one or "none"
 };
 

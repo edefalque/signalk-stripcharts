@@ -1,9 +1,10 @@
 //=================== Filtering sources, an example ======================= 
 // Before running those charts, on the server:
-//   - enable connection 'aava-n2k.data' in SignalK Dashboard, menu Server/Connections
+//   - enable connections 'aava-n2k.data' and 'Plaka log' in SignalK Dashboard, menu Server/Connections
 //   - disable all other connections
 //   - restart SignalK
-// Have a look on menu Data Browser
+// Sources avalaible by path can be seen in Signal K Data Browser
+//   or by clicking 'Enumerate paths' from Stripcharts startup menu
 // Note: On real data such charts may help in calibrating some instruments
 
 const Speeds_per_source =
@@ -14,8 +15,8 @@ const Speeds_per_source =
         y: { unit: "Knot" },
         paths: 
         [
-            { path: "navigation.speedOverGround[aava-n2k.data.43]", AVG: "SOG-a" },
-            { path: "navigation.speedOverGround[aava-n2k.data.160]", AVG: "SOG-b" },
+            { path: "navigation.speedOverGround[Plaka log.II]", AVG: "SOG-Plaka" },
+            { path: "navigation.speedOverGround[aava-n2k.data.160]", AVG: "SOG-aava" },
             { path: "navigation.speedThroughWater", AVG: "STW" }
         ]
     };
@@ -24,7 +25,7 @@ const Speeds_ALL_sources = derivedFrom(Speeds_per_source,
     { stripChartName: "Speeds_ALL_sources",
         paths: 
         [
-            { path: "navigation.speedOverGround", AVG: "SOG" },  // all sources averaged
+            { path: "navigation.speedOverGround", AVG: "SOG-all" },  // all sources averaged
             { path: "navigation.speedThroughWater", AVG: "STW" }
         ]
     }
@@ -35,8 +36,8 @@ const Directions_per_source = derivedFrom(Speeds_per_source,
         y: { unit: "Direction_Degree" },
         paths: 
         [
-            { path: "navigation.courseOverGroundTrue[aava-n2k.data.43]", AVG: "COG-a" },
-            { path: "navigation.courseOverGroundTrue[aava-n2k.data.160]", AVG: "COG-b" },
+            { path: "navigation.courseOverGroundTrue[Plaka log.II]", AVG: "COG-Plaka" },
+            { path: "navigation.courseOverGroundTrue[aava-n2k.data.160]", AVG: "COG-aava" },
             { path: "navigation.headingTrue", AVG: "HDG" }
         ]
 

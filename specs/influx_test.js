@@ -1,5 +1,5 @@
 //=================== Influx interface example ===========================
-// Derived from the filtering sources example (see "Before running ..." below)
+// Reuses part of the filtering sources example (important see "Before running ..." below)
 // Also shows how to override options and units as needed
 
 // Override some options here ...
@@ -9,10 +9,11 @@ path_skUnit.electrical_batteries_1_temperature = "Kelvin";
 
 //=================== Filtering sources, an example ======================= 
 // Before running those charts, on the server:
-//   - enable connection 'aava-n2k.data' in SignalK Dashboard, menu Server/Connections
+//   - enable connections 'aava-n2k.data' and 'Plaka log' in SignalK Dashboard, menu Server/Connections
 //   - disable all other connections
-//   - restart the server
-// Have a look on menu Data Browser
+//   - restart SignalK
+// Sources avalaible by path can be seen in Signal K Data Browser
+//   or by clicking 'Enumerate paths' from Stripcharts startup menu
 
 const Speeds_10min =
     { stripChartName: "Speeds_10min",
@@ -22,9 +23,8 @@ const Speeds_10min =
         y: { unit: "Knot" },  // Meters_per_second
         paths: 
         [
-            { path: "navigation.speedThroughWater", AVG: "STW", MIN: "", MAX: "" },       
-            { path: "navigation.speedOverGround[aava-n2k.data.43]", AVG: "SOG-a" },
-            { path: "navigation.speedOverGround[aava-n2k.data.160]", AVG: "SOG-b" },
+            { path: "navigation.speedOverGround[Plaka log.II]", AVG: "SOG-Plaka" },
+            { path: "navigation.speedOverGround[aava-n2k.data.160]", AVG: "SOG-aava" },
             { path: "environment.wind.speedTrue", AVG: "TWS" },
         ]
     };

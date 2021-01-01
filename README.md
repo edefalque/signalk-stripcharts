@@ -93,7 +93,9 @@ This will install signalk-stripcharts under the closest node_modules folder high
 ### Choice 3 - Install on a client device
 - Download the [ZIP file](https://github.com/edefalque/signalk-stripcharts) and unzip it in a folder.
 
-(by default, it will be installed in a folder named `signalk-stripcharts-master`; rename folder `signalk-stripcharts`)
+(by default, it will be installed in a folder named `signalk-stripcharts-master`; rename the folder `signalk-stripcharts`)
+
+By installing on a client device you minimize the server processor load. 
 
 <div align="right"><sup><a  style="color:red;" href="#table-of-contents">↥ back to TOC</a></sup></div>
 
@@ -152,7 +154,7 @@ They apply to the whole window.
 
 ## How it works
 
-A chart contents and rendition is governed by the **chart specifications**, **unit conversion** and some **general options**.
+A chart contents and rendition are governed by the **chart specifications**, **unit conversion** and some **general options**.
 
 In Signal K, data types are identified as paths: e.g. the true wind speed is identified by the path `environment.wind.speedTrue`.
 
@@ -207,7 +209,7 @@ When the window is closed it is disconnected from Signal K and the buffers are "
 (Persistency is only provided with the InfluxDB option explained further down) 
 
 The charts specifications sets are each stored in a .js file in the `./specs` folder.
-The following specifications files are provided at installation:
+The following specifications files are provided at installation as commented examples:
 - `sail.js`
 - `environment.js`
 - `engines.js`
@@ -221,12 +223,19 @@ In a specification file, a chart specification can be derived from another chart
 <div align="right"><sup><a  style="color:red;" href="#table-of-contents">↥ back to TOC</a></sup></div>
 
 ## Customization
-Currently, customization is easy if the package is installed on the client, but less if it is installed on a server as the specs files may then be less easily accessible. If installed on a Raspberry PI from Signal K Appstore, they will probably be in `$HOME/.signalk/node_modules/signalk-stripcharts/specs/`.
+You will likely want to customize the chart specifications files provided at installation and listed in the previous section and create new specifications as well.
+You will also want to customize:
+- `units.js`, which lists units and provides conversion between Signal K units and chart units
+- `stripcharts_options.js`, which provides general options governing all charts
+
+All those files are in *`...path...`*`/signalk-stripcharts/specs/`. If installed on a Raspberry PI from the Signal K Appstore, they will be in `$HOME/.signalk/node_modules/signalk-stripcharts/specs/`.
+
+Signalk-Stripcharts does not provide yet a way to update those files by a form interface, nor a store that survives installation of new Signalk-Stripcharts versions. Hence copy them in a folder ouside `.../signalk-stripcharts` e.g. in `~/my-specs`; edit them or create new ones with a text editor, or better with a code editor such as Geany or Visual Studio Code; then copy them back to `.../signalk-stripcharts/specs/` for using them.
+
+The following subsections provides additional guidance for customizing or creating new chart specs, units and options.
 
 ### Chart specifications
-The specifications files are installed in `./signalk-stripcharts/specs/`. Ample comments are provided for those features that were not explained above.
-
-New specifications files can be easily derived from those provided at installation. Copy them under another name and edit them with a text editor, or better with a code editor such as Geany or Visual Studio Code. 
+The specifications files are installed in `..../signalk-stripcharts/specs/`. Ample comments are provided for those features that are not explained in this document.
 
 The launch menu has a button that lists all paths and sources currently provided by the selected Signal K server. Switch on all your instruments and systems in order to obtain a full list of what you can chart.
 
@@ -238,7 +247,7 @@ Use the following Signal K dashboard menus:
 - `Data Browser` in order to visualize the active and derived paths with their current values
 
 #### Filtering by sources
-Different sources may provide data for the same path; as needed, the `path` property may be extended to filter a specific source, e.g. `navigation.speedOverGround[gps.1]`. The sources corresponding to a path on your Signal K server can be obtained from the launch menu provided that the corresponding instruments are on and connected. A certain path may be listed several times in the chart specs, e.g.:
+Different sources may provide data for the same path; as needed, the `path` property may be extended to select a specific source, e.g. `navigation.speedOverGround[gps.1]`. The sources corresponding to a path on your Signal K server are identified by the property `$source` and can be obtained from the launch menu provided that the corresponding instruments are on and connected. A certain path may be listed several times in the chart specs, e.g.:
 ```javascript
 { path: "navigation.speedOverGround[gps.1]", AVG: "SOG1" },
 { path: "navigation.speedOverGround[gps.2]", AVG: "SOG2" },
@@ -246,7 +255,9 @@ Different sources may provide data for the same path; as needed, the `path` prop
 ```
 The first two "path lines" will collect data each respectively from `gps.1` and from `gps.2`. The third line will collect SOG data from all sources (including the sources identified in line 1 and 2). 
 
-An example is provided in [sources_filtering_example.js](./specs/sources_filtering_example.js)  (read the comments in the file before running: it runs on a test log file provided with Signal K node server).
+An example is provided in [sources_filtering_example.js](./specs/sources_filtering_example.js)  (read the comments in the file before running: it runs on test log files provided with Signal K node server).
+
+Note: Filtering by source relies on the property `$source` being present in the delta messages, which appears to be systematic with the current node.js implementation of Signalk. However the use of `$source` is not mandatory in Signalk specifications (it is then replaced by the object `source`). Hence, this feature may not work properly on other Signalk implementations.
 
 #### Legends and lines colors
 Colors can be specified per legend at the bottom of the chart specifications file in order to insure consistency accross multiple charts of a same set. Specification file [sail.js](./specs/sail.js) shows how to assign colors.
@@ -262,7 +273,7 @@ It also provides the following default properties for the y and y2 axis as a fun
 
 Those can be overridden in the chart specs.
 
-A special unit `Percent` is provided. It allows to plot values of different units on a same "Percent" y or y2 axis by providing reference values in the Signal K unit for 0% and for 100%. See [engines.js](./specs/engines.js) for an example with comments.
+A special unit `Percent` is provided. It allows to plot values of different units on a same "Percent" y or y2 axis by providing reference values in the Signal K unit for 0% and for 100%. See [engines.js](./specs/engines.js) for an example with comments. The same example shows how grid lines may be added to the chart. This may be used to mark normal and alert levels.
 
 ### General options
 Options governing all charts are given in [stripcharts_options.js](./specs/stripcharts_options.js).
@@ -274,8 +285,13 @@ A few options deal with the usage with InfluxDB: ignore those for the moment.
 The options can be overidden by setting them in the chart specs files, e.g. `options.pointRadius = 2`.
 
 Any of the following options can also be entered as query parameters after the url when launching stripcharts.html:
-`timeTolSec`, `logTypes`, `policy`, `period` and `minPeriod`.
-They will then override the corresponding values in [stripcharts_options.js](./specs/stripcharts_options.js) and in the charts specs file.
+`useInfluxDB`, `timeTolSec`, `logTypes`, `policy`, `period` and `minPeriod`.
+
+Options values are assigned in this order:
+- from [stripcharts_options.js](./specs/stripcharts_options.js),
+- then from the chart specs file,
+- then from the url query parameter.
+The last encountered value will prevail. 
 
 Invalid option values will be replaced by defaults.
 
@@ -531,7 +547,8 @@ such as environment.current, navigation.position, navigation.attitude;
 
 - [ ] Provide a more friendly way to create/edit/manage custom specs files and preserve them when installing new versions of the package
 - [ ] Units, add some missing units and conversions: Volt, Ampere, Watt, Joule, Coulomb, Ratio(0-n), Ratio(0%-100%), Cubic_meter, Cubic_meter_per_second, ...
-- [ ] enumActivePaths.html: list time stamps
+- [ ] Use `meta` messages for units (?)
+- [ ] enumActivePaths.html: list time stamps (?)
 - [X] InfluxDB retrieval: automatically select the RP (if any) which contains some data for the past period selected and with the smallest sampling period even when the latter is larger than avgInterval (in such case data may be plotted as dots as the query results will contain some null values)
 
 ### To-do technical

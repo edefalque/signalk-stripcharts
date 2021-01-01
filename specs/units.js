@@ -30,15 +30,13 @@ const chartUnits = {
 	Pounds_per_square_inch: { label: "psi", min: 0, max: 100, tick: {format: d3.format(".0f") } },
 	Celsius: { label: "°C", min: 0, max: 110, tick: {format: d3.format(".0f") } },
 	Fahrenheit: { label: "°F", min: 32, max: 212, tick: {format: d3.format(".0f") } },
-	
+
 	Percent: { label: "%", min: 0, max: 110, tick: {format: d3.format(".0f") } }
+	// Percent` usage is explained in the engine.js example
+
 };
 	
 const path_skUnit  =   {   // note path property names obtained by replacing "." by "_"
-	// IMPORTANT REMARK about Kelvin/Celsius:
-	// all SK values in Kelvin are converted to Celsius before applying other conversions;
-	// it reduces interpolation overshoots at time 0 (Gibbs phenomenon);
-	// Hence all SK paths expressing a temperature MUST be declared here as "Celsius";  <<<<!!!
 
 	navigation_speedOverGround: "Meters_per_second",
 	navigation_speedThroughWater: "Meters_per_second",
@@ -68,21 +66,21 @@ const path_skUnit  =   {   // note path property names obtained by replacing "."
 	environment_depth_belowTransducer: "Meter",
 	environment_depth_belowKeel: "Meter",
 	environment_depth_belowSurface: "Meter",
-	environment_outside_temperature: "Celsius",
-	environment_water_temperature: "Celsius",	
+	environment_outside_temperature: "Kelvin",
+	environment_water_temperature: "Kelvin",	
 	environment_outside_pressure: "Pascal",
 	
 	propulsion_port_revolutions: "Hertz",
-	propulsion_port_temperature: "Celsius",
+	propulsion_port_temperature: "Kelvin",
 	propulsion_port_oilPressure: "Pascal",
-	propulsion_port_coolantTemperature: "Celsius",
-	propulsion_starboard_exhaustTemperature: "Celsius",
+	propulsion_port_coolantTemperature: "Kelvin",
+	propulsion_starboard_exhaustTemperature: "Kelvin",
 	
 	propulsion_starboard_revolutions: "Hertz",
-	propulsion_starboard_temperature: "Celsius",
+	propulsion_starboard_temperature: "Kelvin",
 	propulsion_starboard_oilPressure: "Pascal",
-	propulsion_starboard_coolantTemperature: "Celsius",
-	propulsion_starboard_exhaustTemperature: "Celsius",
+	propulsion_starboard_coolantTemperature: "Kelvin",
+	propulsion_starboard_exhaustTemperature: "Kelvin",
 	}
 
 const skUnitsConversion = {
@@ -108,7 +106,7 @@ function getConvMultiplier (path, chartUnit) {
 	let pathIdxVal = path.indexOf("[");
 	if (pathIdxVal != -1) { path = path.slice(0,pathIdxVal); }  //strip "[$sourceDev]"
 	let path_ = path.replace(/\./g,"_");  
-	if ( chartUnit == path_skUnit[path_] ) { return 1; }	// in particular no conversion Celsius 2 Celsius
+	if ( chartUnit == path_skUnit[path_] ) { return 1; }
 	let multiplier = 0;
 	if (typeof 	path_skUnit[path_] !== "string") {alert("unit.js: undefined unit for: " + path_);}
 	let convKey = path_skUnit[path_] + "2" + chartUnit;

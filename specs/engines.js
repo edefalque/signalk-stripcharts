@@ -1,14 +1,26 @@
 "use strict";
-// specifications for several concurrent charts (2 of them displayed at once)
-// Note: all durations in seconds
+// This example shows some advanced features:
+//      - plot paths with different SK units as "Percent" on the same y or y2 axis
+//      - vertical and horizontal grid lines for visual improvements
 
 //=================== Engine starboard 24h =======================
-// this chart specification shows an example of "Percent" used as y-unit;
-// this allows to plot values with different units along a same y axis;
-// the values are converted to percents by providing 2 references:
-//      - the value in original unit equivalent to  0%
-//      - the value in original unit equivalent to 100%
-// "Percent" can also be used with y2 axis
+// This chart shows:
+//      - y axis: cooling water temperature and oil pressure
+//      - y2 axis: revolution per minutes (y2 axis)
+// "Percent" is used as y-unit;
+// this allows to plot values with different SK units along a same y axis;
+// the SK values are converted to percents by providing 2 references in the path specification:
+//      - the value in sk unit equivalent to  0%
+//      - the value in sk unit equivalent to 100%
+// "Percent" can also be used with y2 axis.
+//
+// This chart specification also shows how to draw some lines to improve legibility.
+// Horizontal lines are provided for the following reference levels:
+//      -  OilPress alert (0.3bar)
+//      -  OilPress at cruising RPM (3.5bar)
+//      -  WaterTemp at cruising RPM (90°C)
+//      -  WaterTemp alert (100°C)
+// Vertical lines are also provided as visual references
 
 const engineStarboard = "starboard";  // set value as per actual signalk schema engine id
 const enginePort = "port";            // idem
@@ -29,20 +41,19 @@ const Engine_Starb_24h =
                     // The available classes (colors) are defined in stripCharts.css:
                     //      redLine, greenLine, blueLine, violetLine, orangeLine, greyLine
                     {value: 70, text: "OilPress at cruising RPM (3.5bar)", position: "middle", class: "greenLine"},
-                    // 70% = 0.7 = (3.5bar-pc0)/(pc100-pc0) = 3.5bar/5bar  (see path below)
+                    // 70% = 0.7 = 3.5bar/5bar  (see path below)
                     {value: 80, text: "WaterTemp at cruising RPM (90°C)", position: "middle", class: "greenLine"},
-                    // 80% = 0.8 = (90°-pc0)/(pc100-pc0) = (90°-50°)/(100°-50°)   (see path below)
+                    // 80% = 0.8 = (90°-50°)/(100°-50°)   (because 100° is 100% and 50° is 0%)
                     {value: 100, text: "WaterTemp alert (100°C)", position: "middle", class: "redLine"}
                   ]
                 }
         },   
         paths: 
         [
-            { path: "propulsion." + engineStarboard + ".temperature", MAX: "maxWaterTemp", pc0: 50, pc100: 100 }, // 50°C > 100°C
-            // 0% = 50° Celsius, 100% = 100° Celsius
-            // Note: Signalk Kelvin degrees are implicitely converted to Celsius degrees
-            { path: "propulsion." + engineStarboard + ".oilPressure", MIN: "minOilPress", pc0: 0 , pc100: 5e5 },  // 0 bar > 5 bar
-            // pc100 is in signalk units: 5e5 Pascal = 5 bar
+            { path: "propulsion." + engineStarboard + ".temperature", MAX: "maxWaterTemp",
+                pc0: 50 + 273.15, pc100: 100 + 273.15 },   // 50°C -> 100°C (converted to Kelvin, the SK unit)
+            { path: "propulsion." + engineStarboard + ".oilPressure", MIN: "minOilPress", pc0: 0 , pc100: 5e5 },  // 0 bar -> 5 bar
+            // 5 bar converted to the signalk unit: 5e5 Pascal = 5 bar
             { path: "propulsion." + engineStarboard + ".revolutions", axis: "y2", AVG: "RPM" } 
         ]
 	}
