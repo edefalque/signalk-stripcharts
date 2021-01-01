@@ -1,6 +1,5 @@
 # Signalk-stripcharts - Generate strip charts from Signal K live boat data and from InfluxDB past boat data
 
-
   > New in version 0.2.x: Charting past data from InfluxDB made easier (you may need to adapt your [options](#stripcharts-options-for-influxdb) )
 
   Note: The latest `README.md` and `README.pdf` versions are available in `GitHub`, not necessarily in `npmjs.com`, as a new npm version is not created for minor improvements to the documentation.
@@ -230,7 +229,11 @@ You will also want to customize:
 
 All those files are in *`...path...`*`/signalk-stripcharts/specs/`. If installed on a Raspberry PI from the Signal K Appstore, they will be in `$HOME/.signalk/node_modules/signalk-stripcharts/specs/`.
 
-Signalk-Stripcharts does not provide yet a way to update those files by a form interface, nor a store that survives installation of new Signalk-Stripcharts versions. Hence copy them in a folder ouside `.../signalk-stripcharts` e.g. in `~/my-specs`; edit them or create new ones with a text editor, or better with a code editor such as Geany or Visual Studio Code; then copy them back to `.../signalk-stripcharts/specs/` for using them.
+Signalk-Stripcharts does not provide yet a way to update those files by a form interface, nor a store for them that survives installation of new Signalk-Stripcharts versions. Hence:
+- copy those you want to modify in a folder outside `.../signalk-stripcharts` e.g. in `~/my-specs` where you will keep your "master copies";
+- edit them or create new ones with a text editor, or better with a code editor such as Geany or Visual Studio Code;
+- then copy them back to `.../signalk-stripcharts/specs/` for using them;
+- after intalling a new release copy your "master copies" to `.../signalk-stripcharts/specs/` as needed.
 
 The following subsections provides additional guidance for customizing or creating new chart specs, units and options.
 
@@ -291,6 +294,7 @@ Options values are assigned in this order:
 - from [stripcharts_options.js](./specs/stripcharts_options.js),
 - then from the chart specs file,
 - then from the url query parameter.
+
 The last encountered value will prevail. 
 
 Invalid option values will be replaced by defaults.
