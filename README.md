@@ -368,7 +368,7 @@ var options = {
 }
 ```
 
-Alternatively you could leave stripcharts_options.js unchanged and add the line `options.useInfluxDB = true;` at the top of the charts specs files for which you want InfluxDB access.
+Alternatively you could leave stripcharts_options.js unchanged and add the line `options.useInfluxDB = true;` at the top of the charts specs files for which you want InfluxDB access, or provide an url query parameter `...&useInfluxDB=true` when invoking the chart specs.
 
 Note: the InfluxDB plugin `resolution` parameter value should be provided as SK2InfluxResolution_ms if not equal to 1000 msec. 
 
