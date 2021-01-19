@@ -1,4 +1,4 @@
-# Signalk-stripcharts - Generate strip charts from Signal K live boat data and from InfluxDB past boat data
+# Signalk-stripcharts - Plot Signal K live boat data and InfluxDB past boat data
 
   > New in version 0.2.x: Charting past data from InfluxDB made easier (you may need to adapt your [options](#stripcharts-options-for-influxdb) )
 
@@ -19,14 +19,14 @@ All charts have a y-axis with its scale and unit on the left hand side. Optional
 
 The browser window can display two such charts on top of each other. For instance you may have wind speeds on the top chart and boat speeds on the bottom chart, or wind speeds with two different time windows, say 10 minutes and 24 hours. Those two charts can be selected with a dropdown list from a set of active charts.
 
-This documentation first explains how to chart live data from Signal K server.
+This documentation first explains how to chart live data from a Signal K server.
 Then it will explained how past boat data from InfluxDB, a time series database, can be charted as well.
 
 Now it's time to install signalk-stripcharts and start using the default charts specifications provided.
 
 ## Table of contents
 
-- [Signalk-stripcharts - Generate strip charts from Signal K live boat data and from InfluxDB past boat data](#signalk-stripcharts---generate-strip-charts-from-signal-k-live-boat-data-and-from-influxdb-past-boat-data)
+- [Signalk-stripcharts - Plot Signal K live boat data and InfluxDB past boat data](#signalk-stripcharts---plot-signal-k-live-boat-data-and-influxdb-past-boat-data)
   * [Introduction](#introduction)
   * [Table of contents](#table-of-contents)
   * [Installation](#installation)
@@ -94,7 +94,7 @@ This will install signalk-stripcharts under the closest node_modules folder high
 
 (by default, it will be installed in a folder named `signalk-stripcharts-master`; rename the folder `signalk-stripcharts`)
 
-By installing on a client device you minimize the server processor load. 
+By installing on a client device the initial loading time is minimized. 
 
 <div align="right"><sup><a  style="color:red;" href="#table-of-contents">↥ back to TOC</a></sup></div>
 
@@ -120,7 +120,7 @@ The following sections explain signalk-stripcharts accessing and charting only l
 
 ### y- and y2-axis buttons
 
-These buttons affect the size and position of the plotted lines corresponding to the axis:
+These buttons affect the size and position of the plotted lines relatively to the axis:
 
 ![axis buttons](./PNG/readme3.PNG)
 
@@ -229,13 +229,13 @@ You will also want to customize:
 
 All those files are in *`...path...`*`/signalk-stripcharts/specs/`. If installed on a Raspberry PI from the Signal K Appstore, they will be in `$HOME/.signalk/node_modules/signalk-stripcharts/specs/`.
 
-Signalk-Stripcharts does not provide yet a way to update those files by a form interface, nor a store for them that survives installation of new Signalk-Stripcharts versions. Hence:
+Signalk-Stripcharts does not provide yet a way to update those files by a form interface, nor a store for them that survives the installation of new Signalk-Stripcharts versions. Hence:
 - copy those you want to modify in a folder outside `.../signalk-stripcharts` e.g. in `~/my-specs` where you will keep your "master copies";
 - edit them or create new ones with a text editor, or better with a code editor such as Geany or Visual Studio Code;
 - then copy them back to `.../signalk-stripcharts/specs/` for using them;
 - after intalling a new release copy your "master copies" to `.../signalk-stripcharts/specs/` as needed.
 
-The following subsections provides additional guidance for customizing or creating new chart specs, units and options.
+The following subsections provide additional guidance for customizing or creating new chart specs, units and options.
 
 ### Chart specifications
 The specifications files are installed in `..../signalk-stripcharts/specs/`. Ample comments are provided for those features that are not explained in this document.
@@ -385,7 +385,7 @@ When `options.useInfluxDB` is `true` two buttons with **red icons** are added to
 
 ![top line buttons](./PNG/readme7.PNG)
 
-A "fill-right" button is added to the right of the y-axis buttons and a "clock button" is shown next to the top charts selection drop-down list.
+A "fill-right" button is added to the right of the y-axis buttons and a "clock button" is shown next to the top charts selection drop-down list. The "clock button" blinks until the InfluxDB applicable configuration is loaded (an error message is displayed after 20 seconds if the configuration fails to load).
 
 When the charts are first displayed, the pause/play button has a red border: this indicates the "**live mode**" is active: the charts start being filled with live data. If you click the fill-right button <sub>![fill-right button](./PNG/readme8.PNG)</sub> the corresponding chart will be completely filled up to the right with past data from InfluxDB (if such data exist in the database). This action can be performed individually for each chart. Once a chart is filled up the chart fill-right button is hidden.
 
@@ -551,7 +551,6 @@ such as environment.current, navigation.position, navigation.attitude;
 
 - [ ] Provide a more friendly way to create/edit/manage custom specs files and preserve them when installing new versions of the package
 - [ ] Units, add some missing units and conversions: Volt, Ampere, Watt, Joule, Coulomb, Ratio(0-n), Ratio(0%-100%), Cubic_meter, Cubic_meter_per_second, ...
-- [ ] Use `meta` messages for units (?)
 - [ ] enumActivePaths.html: list time stamps (?)
 - [X] InfluxDB retrieval: automatically select the RP (if any) which contains some data for the past period selected and with the smallest sampling period even when the latter is larger than avgInterval (in such case data may be plotted as dots as the query results will contain some null values)
 

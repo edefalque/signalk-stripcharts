@@ -1,7 +1,7 @@
 {
   "name": "signalk-stripcharts",
-  "version": "0.2.1",
-  "description": "Generate strip charts from Signal K live boat data and from InfluxDB past boat data",
+  "version": "0.2.2",
+  "description": "Plot Signal K live boat data and InfluxDB past boat data",
   "main": "stripcharts.js",
   "repository": "https://github.com/edefalque/signalk-stripcharts",
   "scripts": {

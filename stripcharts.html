@@ -90,19 +90,19 @@
     <div id="upperBar" class="bar">
  
         <span id="yCtlUpper" class="yCtl">  
-            <button class="button unstyled" id="yZoomInU" onclick="zoomIn(upperChartObj, 'y')">
+            <button class="button unstyled" id="yZoomInUpper" onclick="zoomIn(upperChartObj, 'y')">
                 <script>insertIcon("zoomInIcon");</script></button>
-            <button class="button unstyled" id="yZoomOutU" onclick="zoomOut(upperChartObj, 'y')">
+            <button class="button unstyled" id="yZoomOutUpper" onclick="zoomOut(upperChartObj, 'y')">
                 <script>insertIcon("zoomOutIcon");</script></button>
-            <button class="button unstyled" id="yUpU" onclick="up(upperChartObj, 'y')">
+            <button class="button unstyled" id="yUpUpper" onclick="up(upperChartObj, 'y')">
                 <script>insertIcon("upIcon");</script></button>
-            <button class="button unstyled" id="yDownU" onclick="down(upperChartObj, 'y')">
+            <button class="button unstyled" id="yDownUpper" onclick="down(upperChartObj, 'y')">
                 <script>insertIcon("downIcon");</script></button>
-            <button class="button unstyled" id="yCenterU" onclick="center(upperChartObj, 'y')">
+            <button class="button unstyled" id="yCenterUpper" onclick="center(upperChartObj, 'y')">
                 <script>insertIcon("centerIcon");</script></button>
-            <button class="button unstyled" id="yResetU" onclick="reset(upperChartObj, 'y')">
+            <button class="button unstyled" id="yResetUpper" onclick="reset(upperChartObj, 'y')">
                 <script>insertIcon("resetIcon");</script></button>          
-            <button class="button unstyled" id="yFillU" onclick="document.activeElement.style.visibility='hidden'; fillFmInflux(upperChartObj);">
+            <button class="button unstyled" id="yFillUpper" onclick="document.activeElement.style.visibility='hidden'; fillFmInflux(upperChartObj);">
                 <script>insertIcon("fillIcon");</script></button>          
         </span>
 
@@ -128,12 +128,12 @@
                             // de-mode playPause button,
                             // activate clockButton,
                             // clear both views
-                            playIcon.style.display = "inline";
-                            pauseIcon.style.display = "none";
+                            playIcn.style.display = "inline";
+                            pauseIcn.style.display = "none";
                             viewPaused = true;
                             modeIsPast = true;
-                            pausePlayButton.style.border = "none";
-                            clockButton.style.border = "2px solid #ff0000";
+                            pausePlayBtn.style.border = "none";
+                            clockBtn.style.border = "2px solid #ff0000";
                             upperChartObj.loadPastView();
                             lowerChartObj.loadPastView();
                         }
@@ -144,7 +144,7 @@
                         return;
                     }
               </script>
-             <button class="button" id="pausePlay" onclick="pausePlay()">
+             <button class="button" id="pausePlayButton" onclick="pausePlay()">
                 <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -2 24 22"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="feather feather-pause">
@@ -164,11 +164,11 @@
                                 backFromPast = true;
                                 modeIsPast = false;
                                 clearAllPastRows();  // free memory
-                                clockButton.style.border = "none";
-                                pausePlayButton.style.border = "2px solid #ff0000";
+                                clockBtn.style.border = "none";
+                                pausePlayBtn.style.border = "2px solid #ff0000";
                                 viewPaused = false;
-                                pauseIcon.style.display = "inline";
-                                playIcon.style.display = "none";
+                                pauseIcn.style.display = "inline";
+                                playIcn.style.display = "none";
                                 flushWaitingRows();  // will setXLabel
                                 backFromPast = false;
                                 return;
@@ -179,15 +179,15 @@
                                 pausedTime = Date.now() - timeOffset;
                                 upperChartObj.setXLabel();
                                 lowerChartObj.setXLabel();
-                                pauseIcon.style.display = "none";
-                                playIcon.style.display = "inline";
+                                pauseIcn.style.display = "none";
+                                playIcn.style.display = "inline";
                                 // chart.zoom.enable(viewPaused); // enable chart zooming only when paused
                             }
                             else {   // was paused
                                 viewPaused = false;
                                 flushWaitingRows();  // just before ending pause
-                                pauseIcon.style.display = "inline";
-                                playIcon.style.display = "none";
+                                pauseIcn.style.display = "inline";
+                                playIcn.style.display = "none";
                             }
                       }	
                   </script>
@@ -215,12 +215,12 @@
                      function toggleNightDay() {
                         document.body.classList.toggle("night");
                         if (document.body.classList.contains("night")) {        
-                            moonIcon.style.display = "none";
-                            sunIcon.style.display = "inline";              
+                            moonIcn.style.display = "none";
+                            sunIcn.style.display = "inline";              
                         }
                         else {
-                            moonIcon.style.display = "inline";
-                            sunIcon.style.display = "none";                
+                            moonIcn.style.display = "inline";
+                            sunIcn.style.display = "none";                
                         }
                      }   
                  </script>
@@ -236,7 +236,7 @@
                     function disconnect() {
                         let r = confirm("Disconnect from Signalk?");
                         if (r == false) { return; }
-                        hangUpButton.disabled = true;
+                        hangUpBtn.disabled = true;
                         timeDisconnected = Date.now() - timeOffset;
                         skConnected = false;
                         ws.close();
@@ -253,17 +253,17 @@
             </button>
         </span>
         <span id="y2CtlUpper" class="yCtl" >  
-            <button class="button unstyled" id="y2ZoomInU" onclick="zoomIn(upperChartObj, 'y2')">
+            <button class="button unstyled" id="y2ZoomInUpper" onclick="zoomIn(upperChartObj, 'y2')">
                 <script>insertIcon("zoomInIcon");</script></button>
-            <button class="button unstyled" id="y2ZoomOutU" onclick="zoomOut(upperChartObj, 'y2')">
+            <button class="button unstyled" id="y2ZoomOutUpper" onclick="zoomOut(upperChartObj, 'y2')">
                 <script>insertIcon("zoomOutIcon");</script></button>
-            <button class="button unstyled" id="y2UpU" onclick="up(upperChartObj, 'y2')">
+            <button class="button unstyled" id="y2UpUpper" onclick="up(upperChartObj, 'y2')">
                 <script>insertIcon("upIcon");</script></button>
-            <button class="button unstyled" id="y2DownU" onclick="down(upperChartObj, 'y2')">
+            <button class="button unstyled" id="y2DownUpper" onclick="down(upperChartObj, 'y2')">
                 <script>insertIcon("downIcon");</script></button>
-            <button class="button unstyled" id="y2CenterU" onclick="center(upperChartObj, 'y2')">
+            <button class="button unstyled" id="y2CenterUpper" onclick="center(upperChartObj, 'y2')">
                 <script>insertIcon("centerIcon");</script></button>
-            <button class="button unstyled" id="y2ResetU" onclick="reset(upperChartObj, 'y2')">
+            <button class="button unstyled" id="y2ResetUpper" onclick="reset(upperChartObj, 'y2')">
                 <script>insertIcon("resetIcon");</script></button>       
         </span>
 
@@ -274,19 +274,19 @@
     <div id="lowerBar" class="bar">
 
         <span id="yCtlLower" class="yCtl" >  
-            <button class="button unstyled" id="yZoomInL" onclick="zoomIn(lowerChartObj, 'y')">
+            <button class="button unstyled" id="yZoomInLower" onclick="zoomIn(lowerChartObj, 'y')">
                 <script>insertIcon("zoomInIcon");</script></button>
-            <button class="button unstyled" id="yZoomOutL" onclick="zoomOut(lowerChartObj, 'y')">
+            <button class="button unstyled" id="yZoomOutLower" onclick="zoomOut(lowerChartObj, 'y')">
                 <script>insertIcon("zoomOutIcon");</script></button>
-            <button class="button unstyled" id="yUpL" onclick="up(lowerChartObj, 'y')">
+            <button class="button unstyled" id="yUpLower" onclick="up(lowerChartObj, 'y')">
                 <script>insertIcon("upIcon");</script></button>
-            <button class="button unstyled" id="yDownL" onclick="down(lowerChartObj, 'y')">
+            <button class="button unstyled" id="yDownLower" onclick="down(lowerChartObj, 'y')">
                 <script>insertIcon("downIcon");</script></button>
-            <button class="button unstyled" id="yCenterL" onclick="center(lowerChartObj, 'y')">
+            <button class="button unstyled" id="yCenterLower" onclick="center(lowerChartObj, 'y')">
                 <script>insertIcon("centerIcon");</script></button>
-            <button class="button unstyled" id="yResetL" onclick="reset(lowerChartObj, 'y')">
+            <button class="button unstyled" id="yResetLower" onclick="reset(lowerChartObj, 'y')">
                 <script>insertIcon("resetIcon");</script></button>
-            <button class="button unstyled" id="yFillL" onclick="document.activeElement.style.visibility='hidden'; fillFmInflux(lowerChartObj);">
+            <button class="button unstyled" id="yFillLower" onclick="document.activeElement.style.visibility='hidden'; fillFmInflux(lowerChartObj);">
                 <script>insertIcon("fillIcon");</script></button>                       
         </span>
         
@@ -297,17 +297,17 @@
         </span>
  
         <span id="y2CtlLower" class="yCtl">  
-            <button class="button unstyled" id="y2ZoomInL" onclick="zoomIn(lowerChartObj, 'y2')">
+            <button class="button unstyled" id="y2ZoomInLower" onclick="zoomIn(lowerChartObj, 'y2')">
                 <script>insertIcon("zoomInIcon");</script></button>
-            <button class="button unstyled" id="y2ZoomOutL" onclick="zoomOut(lowerChartObj, 'y2')">
+            <button class="button unstyled" id="y2ZoomOutLower" onclick="zoomOut(lowerChartObj, 'y2')">
                 <script>insertIcon("zoomOutIcon");</script></button>
-            <button class="button unstyled" id="y2UpL" onclick="up(lowerChartObj, 'y2')">
+            <button class="button unstyled" id="y2UpLower" onclick="up(lowerChartObj, 'y2')">
                 <script>insertIcon("upIcon");</script></button>
-            <button class="button unstyled" id="y2DownL" onclick="down(lowerChartObj, 'y2')">
+            <button class="button unstyled" id="y2DownLower" onclick="down(lowerChartObj, 'y2')">
                 <script>insertIcon("downIcon");</script></button>
-            <button class="button unstyled" id="y2CenterL" onclick="center(lowerChartObj, 'y2')">
+            <button class="button unstyled" id="y2CenterLower" onclick="center(lowerChartObj, 'y2')">
                 <script>insertIcon("centerIcon");</script></button>
-            <button class="button unstyled" id="y2ResetL" onclick="reset(lowerChartObj, 'y2')">
+            <button class="button unstyled" id="y2ResetLower" onclick="reset(lowerChartObj, 'y2')">
                 <script>insertIcon("resetIcon");</script></button>          
         </span>
     </div>
@@ -320,24 +320,25 @@
 <script>
     // Define short names for some elements
     var yCtlU = document.getElementById("yCtlUpper");
-    var yFillU = document.getElementById("yFillU");
+    var yFillU = document.getElementById("yFillUpper");
     var y2CtlU = document.getElementById("y2CtlUpper");
     
     var yCtlL = document.getElementById("yCtlLower");
-    var yFillL = document.getElementById("yFillL");
+    var yFillL = document.getElementById("yFillLower");
     var y2CtlL = document.getElementById("y2CtlLower");
     
-    let selectUpper = document.getElementById("selectUpper");
-    var selectLower = document.getElementById("selectLower");
+    var selectU = document.getElementById("selectUpper");
+    var selectL = document.getElementById("selectLower");
     
-    var pausePlayButton = document.getElementById("pausePlay");
-    var playIcon = document.getElementById("playIcon");
-    var pauseIcon = document.getElementById("pauseIcon");
+    var clockBtn = document.getElementById("clockButton");
+    var pausePlayBtn = document.getElementById("pausePlayButton");
+    var playIcn = document.getElementById("playIcon");
+    var pauseIcn = document.getElementById("pauseIcon");
     
-    var moonIcon = document.getElementById("moonIcon");
-    var sunIcon = document.getElementById("sunIcon");              
+    var moonIcn = document.getElementById("moonIcon");
+    var sunIcn = document.getElementById("sunIcon");              
     
-    var hangUpButton = document.getElementById("hangUpButton");
+    var hangUpBtn = document.getElementById("hangUpButton");
     
     </script>
     
